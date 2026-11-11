@@ -1,0 +1,59 @@
+media: media
+content:
+  - name: posts
+    label: ブログ・残しておきたい話
+    type: collection
+    path: content/posts
+    fields:
+      - name: title
+        label: タイトル
+        type: string
+        required: true
+      - name: category
+        label: 分類
+        type: select
+        options:
+          values:
+            - name: blog
+              label: ブログ
+            - name: medical
+              label: 医学メモ
+            - name: thoughts
+              label: 考えたこと
+      - name: published
+        label: 公開する
+        type: boolean
+        default: false
+      - name: body
+        label: 本文
+        type: rich-text
+  - name: projects
+    label: 作ったもの・制作中
+    type: collection
+    path: content/projects
+    fields:
+      - name: title
+        label: 作品名
+        type: string
+        required: true
+      - name: status
+        label: 状態
+        type: select
+        options:
+          values:
+            - name: published
+              label: 公開中
+            - name: developing
+              label: 制作中
+            - name: paused
+              label: 休止中
+      - name: visible
+        label: サイトに表示
+        type: boolean
+        default: false
+      - name: url
+        label: リンク
+        type: string
+      - name: description
+        label: 説明
+        type: text
