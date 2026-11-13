@@ -1,32 +1,5 @@
 media: media
 content:
-  - name: posts
-    label: ブログ・残しておきたい話
-    type: collection
-    path: content/posts
-    fields:
-      - name: title
-        label: タイトル
-        type: string
-        required: true
-      - name: category
-        label: 分類
-        type: select
-        options:
-          values:
-            - name: blog
-              label: ブログ
-            - name: medical
-              label: 医学メモ
-            - name: thoughts
-              label: 考えたこと
-      - name: published
-        label: 公開する
-        type: boolean
-        default: false
-      - name: body
-        label: 本文
-        type: rich-text
   - name: projects
     label: 作ったもの・制作中
     type: collection
@@ -57,3 +30,23 @@ content:
       - name: description
         label: 説明
         type: text
+  - name: writings
+    label: 書いたもの（noteリンク）
+    type: collection
+    path: content/writings
+    fields:
+      - name: title
+        label: 記事タイトル
+        type: string
+        required: true
+      - name: url
+        label: noteの記事URL
+        type: string
+        required: true
+      - name: description
+        label: 紹介文（本文はnoteで管理）
+        type: text
+      - name: visible
+        label: サイトに表示
+        type: boolean
+        default: false

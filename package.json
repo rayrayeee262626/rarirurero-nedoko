@@ -6,7 +6,7 @@
     "build": "node tools/build.mjs",
     "build:preview": "node tools/build-preview.mjs",
     "check": "node tools/check.mjs",
-    "test": "node tests/worker.test.mjs",
+    "test": "node tests/worker.test.mjs && node tests/catalog.test.mjs",
     "backup:source": "node tools/backup-source.mjs"
   },
   "engines": { "node": ">=22" }

@@ -1,6 +1,8 @@
 # 作業方針
 
-- サイト本体は `site/`、CMS設定は `.pages.yml`、記事は `content/`。既存の記事・CMS設定を上書きしない。
+- サイト本体は `site/`。作品・制作中は `content/projects/`、note紹介は `content/writings/` を編集する。`.pages.yml` はこの2コレクションのみを管理する。
+- `content/posts/` は旧記事の保管用。新規ブログ機能を復活させたり、既存データを削除したりしない。`article.html?file=...` と `notes.html` は過去リンクの互換性のため残す。
+- 追加・編集・非表示はファイル単位で管理し、ビルドで公開用catalogを生成する。既存項目と同名のデフォルトをJSへ二重定義しない。非表示は `visible: false`。公開GitHubの秘匿機能ではない。
 - 公開用出力は `npm run build` が作る `dist/` のみ。リポジトリ全体をアップロードしない。
 - 明示的な依頼がない限り、Cloudflareへのデプロイ、production設定・binding変更、remote D1へのSQL実行、投稿・削除テストは行わない。
 - `database/schema.sql` は既存構造の記録。ビルド・CI・デプロイから自動実行しない。
