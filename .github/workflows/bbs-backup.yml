@@ -1,0 +1,45 @@
+name: Encrypted D1 backup (no deployment)
+
+on:
+  push:
+    branches: [codex/cloudflare-connect]
+    paths:
+      - .github/workflows/bbs-backup.yml
+      - tools/backup-d1.py
+  workflow_dispatch:
+  # Schedules take effect only once this workflow is reviewed and merged to main.
+  schedule:
+    - cron: '23 18 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-bbs-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Read trusted backup source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned encryption library
+        run: python3 -m pip install --disable-pip-version-check cryptography==46.0.3
+      - name: Export, restore in memory, encrypt, and verify
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f76e5aa4c68f52aa641c4e00da7be273
+          D1_BACKUP_KEY: ${{ secrets.D1_BACKUP_KEY }}
+          BACKUP_OUTPUT: ${{ runner.temp }}/encrypted-d1-backup
+        run: python3 tools/backup-d1.py
+      - name: Store encrypted files only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: encrypted-d1-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/encrypted-d1-backup/
+          if-no-files-found: error
+          retention-days: 90
