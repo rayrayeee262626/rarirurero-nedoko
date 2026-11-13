@@ -4,7 +4,7 @@
 基点: `3fc320cf552a7ef5f4dbfecd58b671e3c470bc61`。
 作業ブランチ: `codex/integrate-site-source`。
 
-現在、このブランチはローカルのみ。GitHub接続のGit tree作成とGit pushがいずれも403で拒否され、リモートへの反映・PR作成は未完了。接続にリポジトリのContents書き込み権限を付与した後、このブランチをpushする。秘密値をチャットへ貼る必要はない。引き継ぎ用のGit bundleとパッチを別途出力している。
+当初はGitHub接続のGit tree作成とGit pushが403で拒否されたが、ChatGPT Codex Connectorのインストール後に解消し、このブランチをGitHubへpush済み。mainへのマージ・本番デプロイは行っていない。引き継ぎ用に先に出力したGit bundleとパッチは、権限解消前の文書を含む時点のスナップショットであり、最新の状態はGitHub上のブランチを参照する。
 
 ## 今回の作業範囲
 
