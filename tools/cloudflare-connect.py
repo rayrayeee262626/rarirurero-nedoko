@@ -33,21 +33,25 @@ def api_get(path, token):
         raise ConnectionFailure('Cloudflare did not confirm success; response details withheld.')
     return data.get('result')
 
-def discover(token):
+def discover(token, selected_account_id=None):
     verified = api_get('/user/tokens/verify', token)
     if not isinstance(verified, dict) or verified.get('status') != 'active':
         raise ConnectionFailure('Token is not active.')
-    accounts = []
-    for page in range(1, 21):
-        chunk = api_get(f'/accounts?per_page=50&page={page}', token)
-        if not isinstance(chunk, list):
-            raise ConnectionFailure('Cannot list accessible accounts.')
-        accounts.extend(chunk)
-        if len(chunk) < 50:
-            break
+    if selected_account_id:
+        if not re.fullmatch(r'[a-fA-F0-9]{32}', selected_account_id):
+            raise ConnectionFailure('Invalid selected account identifier.')
+        accounts = [{'id': selected_account_id}]
     else:
-        raise ConnectionFailure('Account list exceeded discovery limit.')
-    print(f'Accessible accounts returned by Cloudflare: {len(accounts)}')
+        accounts = []
+        for page in range(1, 21):
+            chunk = api_get(f'/accounts?per_page=50&page={page}', token)
+            if not isinstance(chunk, list):
+                raise ConnectionFailure('Cannot list accessible accounts.')
+            accounts.extend(chunk)
+            if len(chunk) < 50:
+                break
+        else:
+            raise ConnectionFailure('Account list exceeded discovery limit.')
     candidates = []
     for account in accounts:
         account_id = account.get('id', '')
@@ -78,7 +82,7 @@ def main():
     token = os.environ.get('CLOUDFLARE_API_TOKEN', '').strip()
     if not token:
         raise ConnectionFailure('CLOUDFLARE_API_TOKEN is not registered or is unavailable to this run.')
-    target = discover(token)
+    target = discover(token, os.environ.get('CLOUDFLARE_ACCOUNT_ID'))
     summary = {'project': PROJECT, 'token_active': True, 'pages_metadata_read': True,
                'production_binding': 'DB', 'd1_metadata_read': True,
                'git_integration': target['git_integration'],

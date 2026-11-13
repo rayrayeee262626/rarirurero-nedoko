@@ -41,5 +41,13 @@ class ConnectionTests(unittest.TestCase):
                 connect.discover('test-token')
         self.assertEqual(api.call_count, 1)
 
+    def test_selected_account_does_not_require_account_listing_permission(self):
+        values = self.responses()
+        del values[1]
+        with patch.object(connect, 'api_get', side_effect=values) as api:
+            target = connect.discover('test-token', self.account_id)
+        self.assertEqual(target['account_id'], self.account_id)
+        self.assertFalse(any(call.args[0].startswith('/accounts?') for call in api.call_args_list))
+
 if __name__ == '__main__':
     unittest.main()
