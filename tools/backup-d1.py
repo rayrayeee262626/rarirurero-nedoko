@@ -1,4 +1,4 @@
-"""Export the bound production D1, verify locally, and store authenticated ciphertext only."""
+"""Read the bound production BBS database, verify locally, and store authenticated ciphertext only."""
 import base64
 from datetime import datetime, timezone
 import hashlib
@@ -8,9 +8,7 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
-import time
 import urllib.error
-import urllib.parse
 import urllib.request
 
 from cryptography.fernet import Fernet
@@ -22,45 +20,84 @@ connect = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(connect)
 MAX_BYTES = 32 * 1024 * 1024
 
-def export_request(target, token, bookmark=None):
-    path = f"/accounts/{target['account_id']}/d1/database/{target['database_id']}/export"
-    body = {'output_format': 'polling'}
-    if bookmark:
-        body['current_bookmark'] = bookmark
+def read_only_snapshot(target, token):
+    # One SELECT gives a consistent SQLite statement snapshot of schema, all BBS
+    # columns and the AUTOINCREMENT high-water mark. No remote write SQL exists.
+    sql = """SELECT
+      (SELECT json_group_array(json_object('type',type,'name',name,'sql',sql))
+       FROM sqlite_schema WHERE sql IS NOT NULL AND name NOT GLOB 'sqlite_*'
+       AND name NOT GLOB '_cf_*') AS schema_json,
+      (SELECT json_group_array(json_object('id',id,'parent_id',parent_id,'name',name,
+        'message',message,'created_at',created_at,'ip_hash',ip_hash))
+       FROM (SELECT * FROM bbs_posts ORDER BY id)) AS rows_json,
+      (SELECT seq FROM sqlite_sequence WHERE name='bbs_posts') AS sequence_value"""
+    path = f"/accounts/{target['account_id']}/d1/database/{target['database_id']}/query"
     request = urllib.request.Request(connect.API + path, method='POST',
         headers={'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
-        data=json.dumps(body).encode())
+        data=json.dumps({'sql': sql}).encode())
     try:
-        with urllib.request.build_opener(connect.NoRedirect).open(request, timeout=30) as response:
-            result = json.load(response)
+        with urllib.request.build_opener(connect.NoRedirect).open(request, timeout=60) as response:
+            raw = response.read(MAX_BYTES + 1)
     except urllib.error.HTTPError as error:
-        raise connect.ConnectionFailure(f'D1 export returned HTTP {error.code}; no restore or data-write request was made.') from None
-    if not isinstance(result, dict) or result.get('success') is not True:
-        raise connect.ConnectionFailure('D1 export was not successful; response withheld.')
-    return result['result']
+        raise connect.ConnectionFailure(f'D1 read-only query returned HTTP {error.code}; no data-write request made.') from None
+    if len(raw) > MAX_BYTES:
+        raise connect.ConnectionFailure('Backup exceeds bounded response size.')
+    result = json.loads(raw)
+    if result.get('success') is not True or len(result.get('result', [])) != 1:
+        raise connect.ConnectionFailure('D1 did not confirm a single read-only snapshot.')
+    query = result['result'][0]
+    if query.get('success') is not True or len(query.get('results', [])) != 1:
+        raise connect.ConnectionFailure('D1 snapshot returned an unexpected row count.')
+    row = query['results'][0]
+    schema = json.loads(row['schema_json'])
+    rows = json.loads(row['rows_json'])
+    return rebuild_snapshot(schema, rows, row['sequence_value'])
 
-def export_sql(target, token):
-    bookmark = None
-    for _ in range(90):
-        result = export_request(target, token, bookmark)
-        if result.get('status') == 'error':
-            raise connect.ConnectionFailure('D1 reported an export error; details withheld.')
-        if result.get('status') == 'complete':
-            url = result.get('result', {}).get('signed_url', '')
-            parsed = urllib.parse.urlparse(url)
-            if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password:
-                raise connect.ConnectionFailure('Invalid export download URL.')
-            # Signed URL from Cloudflare: a separate request, with NO API Authorization header.
-            with urllib.request.build_opener(connect.NoRedirect).open(url, timeout=60) as response:
-                sql = response.read(MAX_BYTES + 1)
-            if not sql or len(sql) > MAX_BYTES:
-                raise connect.ConnectionFailure('Export empty or beyond bounded backup size.')
-            return sql, result.get('at_bookmark') or bookmark
-        bookmark = result.get('at_bookmark') or bookmark
-        if not bookmark:
-            raise connect.ConnectionFailure('Export did not return a polling bookmark.')
-        time.sleep(2)
-    raise connect.ConnectionFailure('Export polling timed out; no completed backup published.')
+
+def rebuild_snapshot(schema, rows, sequence):
+    tables = [obj for obj in schema if obj['type'] == 'table']
+    if len(tables) != 1 or tables[0]['name'] != 'bbs_posts':
+        raise connect.ConnectionFailure('Unexpected user tables; refusing to call a partial copy complete.')
+    if any(obj['type'] not in ('table', 'index') for obj in schema):
+        raise connect.ConnectionFailure('Unexpected schema objects; a reviewed backup extension is required.')
+    db = sqlite3.connect(':memory:')
+    try:
+        db.enable_load_extension(False)
+        db.set_authorizer(lambda action, *_: sqlite3.SQLITE_DENY if action in (sqlite3.SQLITE_ATTACH, sqlite3.SQLITE_DETACH) else sqlite3.SQLITE_OK)
+        db.executescript(tables[0]['sql'])
+        columns = {row[1] for row in db.execute('PRAGMA table_info(bbs_posts)')}
+        expected = {'id', 'parent_id', 'name', 'message', 'created_at', 'ip_hash'}
+        if columns != expected:
+            raise connect.ConnectionFailure('BBS columns changed; refusing incomplete column capture.')
+        for row in rows:
+            if set(row) != expected or type(row['id']) is not int or not 0 < row['id'] <= 9007199254740991:
+                raise connect.ConnectionFailure('Unexpected row fields or ID precision.')
+            db.execute('INSERT INTO bbs_posts(id,parent_id,name,message,created_at,ip_hash) VALUES (?,?,?,?,?,?)',
+                tuple(row[key] for key in ('id', 'parent_id', 'name', 'message', 'created_at', 'ip_hash')))
+        max_id = max((row['id'] for row in rows), default=0)
+        if sequence is not None:
+            if type(sequence) is not int or not max_id <= sequence <= 9007199254740991:
+                raise connect.ConnectionFailure('Invalid sequence high-water mark.')
+            db.execute("DELETE FROM sqlite_sequence WHERE name='bbs_posts'")
+            db.execute('INSERT INTO sqlite_sequence(name,seq) VALUES (?,?)', ('bbs_posts', sequence))
+        elif rows:
+            raise connect.ConnectionFailure('Missing AUTOINCREMENT state.')
+        for obj in schema:
+            if obj['type'] == 'index':
+                db.executescript(obj['sql'])
+        dump = ('\n'.join(db.iterdump()) + '\n').encode()
+        if len(dump) > MAX_BYTES:
+            raise connect.ConnectionFailure('Backup exceeds bounded SQL size.')
+        if db.execute('SELECT count(*) FROM bbs_posts').fetchone()[0] != len(rows):
+            raise connect.ConnectionFailure('Local row count mismatch.')
+        keys = ('id', 'parent_id', 'name', 'message', 'created_at', 'ip_hash')
+        restored = [dict(zip(keys, row)) for row in db.execute('SELECT id,parent_id,name,message,created_at,ip_hash FROM bbs_posts ORDER BY id')]
+        if restored != sorted(rows, key=lambda row: row['id']):
+            raise connect.ConnectionFailure('Restored private or public field differs from snapshot.')
+        return dump
+    finally:
+        db.close()
+
 
 def validate_sql(sql):
     db = sqlite3.connect(':memory:')
@@ -118,14 +155,14 @@ def main():
     if not token or not account:
         raise connect.ConnectionFailure('Missing registered Cloudflare credentials or account identifier.')
     target = connect.discover(token, account)
-    sql, bookmark = export_sql(target, token)
+    sql = read_only_snapshot(target, token)
     verification = validate_sql(sql)
     key_source = 'D1_BACKUP_KEY' if os.environ.get('D1_BACKUP_KEY') else 'CLOUDFLARE_API_TOKEN'
     secret = os.environ[key_source].strip()
     if len(secret) < 32:
         raise connect.ConnectionFailure('Backup encryption secret must have at least 32 characters.')
     payload = json.dumps({'format': 'nedoko-d1-snapshot-v1', 'captured_at': datetime.now(timezone.utc).isoformat(),
-        'target': target, 'bookmark': bookmark, 'sql_sha256': hashlib.sha256(sql).hexdigest(),
+        'target': target, 'capture_method': 'single-read-only-select', 'sql_sha256': hashlib.sha256(sql).hexdigest(),
         'sql_base64': base64.b64encode(sql).decode(), 'verification': verification}, separators=(',', ':')).encode()
     encrypted = seal(payload, secret)
     recovered = unseal(encrypted, secret)
@@ -139,8 +176,8 @@ def main():
     (output / 'database.encrypted.json').write_bytes(encrypted)
     digest = hashlib.sha256(encrypted).hexdigest()
     (output / 'database.encrypted.sha256').write_text(f'{digest}  database.encrypted.json\n')
-    (output / 'README.txt').write_text(f'Encrypted full D1 SQL export. Authenticated encryption verified; restored in SQLite memory only.\nRecovery secret: GitHub Actions secret {key_source} as it existed at capture time.\nKeep this secret available. Before rotating/deleting it, preserve or re-encrypt old backups.\nNever publish decrypted SQL; no production restore has been performed.\n')
-    summary = {'full_d1_export_saved_encrypted': True, 'encryption_roundtrip_ok': True,
+    (output / 'README.txt').write_text(f'Encrypted full BBS application schema and data captured by one read-only SELECT. Authenticated encryption verified; restored in SQLite memory only.\nRecovery secret: GitHub Actions secret {key_source} as it existed at capture time.\nKeep this secret available. Before rotating/deleting it, preserve or re-encrypt old backups.\nNever publish decrypted SQL; no production restore has been performed.\n')
+    summary = {'application_database_backup_saved_encrypted': True, 'capture_method': 'single-read-only-select', 'encryption_roundtrip_ok': True,
                'local_sqlite_restore_ok': True, **verification, 'recovery_secret': key_source,
                'production_restore_performed': False, 'deployment_performed': False}
     text = json.dumps(summary, indent=2)
