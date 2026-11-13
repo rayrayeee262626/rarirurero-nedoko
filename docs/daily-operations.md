@@ -25,7 +25,23 @@
 2. `npm run build:preview` と `node tests/preview.test.mjs`、必要なら `python tools/preview-browser-smoke.py` で分離を確認する。
 3. preview workflowを対象ブランチで手動実行する。配信先はコード中で試作プロジェクトに固定され、本番への切替入力はない。
 4. 試作URLと検証結果をユーザーに提示する。
-5. 本番への反映は別途依頼・承認後に行う。今回、本番配信用workflowは追加していない。
+5. 本番への反映は別途依頼・承認後、`deployment/approved-release.json` の対象ファイルハッシュを更新してテストする。手動のproduction workflowへ、レビュー済みmainの完全一致コミットをexpected_commitとして指定する。push・マージだけでは本番配信しない。
+
+production workflowは直前の暗号化BBSバックアップを保存してから既存本番へdistのみを配信する。DB binding・変数を照合し、公開ファイル・BBS readiness・既存表示投稿を確認する。検証失敗時は直前の本番配信へrollbackし、D1は復元しない。
+
+## 本番反映記録（2026-11-13 14:02 UTC）
+
+ユーザーが試作版の配色を確認し、本番反映を明示承認。承認済み配色とホームの新着・作品表示を本番へ反映した。掲示板Worker・bbs.js・schema.sqlは元ZIPと同一、CMS設定・既存記事も変更していない。FC2・Xの既存タグも維持した。
+
+- 成功実行: https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43438940071
+- 配信コミット: `535cadbcdc8df5046971d6fa1533ff5f8235a289`
+- 本番配信ID: `d46de83a-1217-4762-a626-e37390683ea9`
+- 直前の復旧先ID: `14bc87e4-1633-4c05-87ab-7615f037f842`
+- 直前の暗号化バックアップ: `encrypted-pre-release-backup-43438940071`、保管期限2027-02-11 UTC。
+
+公開静的ファイル12本が承認済みハッシュと一致、DB bindingと環境変数が不変、BBS readinessとTurnstile設定が不変、以前の表示投稿が保持されていることを確認した。本番への投稿・削除・D1書き込みは実施していない。
+
+最初の試行は公開GET確認で停止し、アップロード前だった。確認方法を修正した再実行で成功。実行時のrollbackは不要だった。
 
 preview workflowは配信前に、別プロジェクトの本番・プレビュー両設定にDB・KV・R2・サービスbinding・環境変数がないことを確認する。不審な既存設定があれば勝手に消さず停止する。
 
