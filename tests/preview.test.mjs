@@ -28,6 +28,9 @@ test('preview build excludes counter, third-party scripts and original worker', 
     assert.ok(text.includes('noindex,nofollow'));
   }
   const preview = await readFile(new URL('_worker.js', root), 'utf8');
+  const styles = await readFile(new URL('styles.css', root), 'utf8');
+  assert.ok(styles.trimStart().startsWith(':root{'), 'Removing a font URL with semicolons must preserve the theme variables');
+  assert.doesNotMatch(styles, /fonts\.googleapis\.com/);
   assert.doesNotMatch(preview, /env\.DB|TURNSTILE_SECRET|BBS_ADMIN_KEY|fetch\(['"]https:/);
   const source = await readFile(new URL('../site/_worker.js', import.meta.url), 'utf8');
   assert.ok(source.includes('env.DB'));
