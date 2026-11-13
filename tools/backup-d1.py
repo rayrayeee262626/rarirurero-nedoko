@@ -49,6 +49,9 @@ def read_only_snapshot(target, token):
     if query.get('success') is not True or len(query.get('results', [])) != 1:
         raise connect.ConnectionFailure('D1 snapshot returned an unexpected row count.')
     row = query['results'][0]
+    print('Read-only snapshot response received; public/private field values withheld.')
+    if not all(key in row for key in ('schema_json', 'rows_json', 'sequence_value')):
+        raise connect.ConnectionFailure('Snapshot result field names did not match the query.')
     schema = json.loads(row['schema_json'])
     rows = json.loads(row['rows_json'])
     return rebuild_snapshot(schema, rows, row['sequence_value'])
@@ -155,8 +158,11 @@ def main():
     if not token or not account:
         raise connect.ConnectionFailure('Missing registered Cloudflare credentials or account identifier.')
     target = connect.discover(token, account)
+    print('Backup stage: production binding verified.')
     sql = read_only_snapshot(target, token)
+    print('Backup stage: SQL reconstructed locally.')
     verification = validate_sql(sql)
+    print('Backup stage: local SQLite restore verified.')
     key_source = 'D1_BACKUP_KEY' if os.environ.get('D1_BACKUP_KEY') else 'CLOUDFLARE_API_TOKEN'
     secret = os.environ[key_source].strip()
     if len(secret) < 32:
@@ -192,6 +198,6 @@ if __name__ == '__main__':
     except connect.ConnectionFailure as error:
         print(str(error), file=sys.stderr)
         sys.exit(1)
-    except Exception:
-        print('D1 backup failed; API responses, URLs, SQL and credentials withheld. No production restore was attempted.', file=sys.stderr)
+    except Exception as error:
+        print(f'D1 backup failed ({type(error).__name__}); API responses, URLs, SQL and credentials withheld. No production restore was attempted.', file=sys.stderr)
         sys.exit(1)
