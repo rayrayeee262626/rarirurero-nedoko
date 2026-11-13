@@ -50,9 +50,9 @@ GitHub Secretを上書き・削除する前に、元の鍵を安全に保管す�
 
 ### 未完了と改善点
 
-- 定期scheduleは、workflowがレビュー・default branchへマージされた後にのみ有効。**今回は1回分の成功であり、日次バックアップ稼働済みではない。** mainは変更していない。
+- 定期scheduleは2026-11-13にPR #5でdefault branchへ統合して有効化済み。標準ブランチでの初回手動実行も成功した。毎日のschedule実行は今後の履歴で確認する。詳細は [日常運用](daily-operations.md)。
 - 90日を超える独立保管先・自動転送・専用の復号鍵は未設定。
 - 実DBにはZIPのschema.sqlに記載された名前の2索引が揃っていない。バックアップは実DBの構造をそのまま保存し、本番索引は変更していない。必要性を確認したうえで別作業として扱う。
-- サイトへのデプロイや設定変更は実施していない。PagesのEdit権限は付与されているが、配信成功の実証はまだ行っていない。
+- 本番サイトへのデプロイや本番設定変更は実施していない。別プロジェクトへの試作配信は成功し、 https://rarirurero-nedoko-preview.pages.dev/ で確認できる。試作に本番DBや秘密値はbindingしない。
 
 参考: https://developers.cloudflare.com/api/resources/d1/subresources/database/methods/query/

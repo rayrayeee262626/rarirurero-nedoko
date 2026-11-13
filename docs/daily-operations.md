@@ -9,7 +9,9 @@
 
 ## 毎日の掲示板バックアップ
 
-`.github/workflows/bbs-backup.yml` をdefault branchへ統合すると、毎日18:23 UTC（日本時間03:23）の実行対象になる。GitHub側の混雑で開始が遅れることがある。暗号化したartifactは各回90日保存する。GitHub Actions画面から手動でも実行でき、CodexもGitHub経由で実行・確認できる。
+2026-11-13に `.github/workflows/bbs-backup.yml` をdefault branchへ統合し、毎日18:23 UTC（日本時間03:23）の実行設定を有効化した。GitHub側の混雑で開始が遅れることがある。暗号化したartifactは各回90日保存する。GitHub Actions画面から手動でも実行でき、CodexもGitHub経由で実行・確認できる。
+
+標準ブランチの同じ設定で手動の初回実行に成功: https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43431016989 。次回以降のschedule実行は今後の履歴で確認する。実行した時点で本番ホームが以前とバイト同一であることも確認した。
 
 本番D1には単一SELECTのみを送り、書き込みSQLやDBロックを使わない。実スキーマ、全BBS列、投稿・返信、採番情報をまとめて取得し、SQLiteメモリ内で整合性・復元を検証してから暗号化する。未知の追加表・列があれば停止して、不完全なバックアップを成功扱いしない。
 
