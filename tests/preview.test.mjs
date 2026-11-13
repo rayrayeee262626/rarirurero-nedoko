@@ -32,6 +32,7 @@ test('preview build excludes counter, third-party scripts and original worker', 
   const styles = await readFile(new URL('styles.css', root), 'utf8');
   assert.ok(styles.trimStart().startsWith(':root{'), 'Removing a font URL with semicolons must preserve the theme variables');
   assert.doesNotMatch(styles, /fonts\.googleapis\.com/);
+  assert.deepEqual(await readFile(new URL('mascot.webp', root)), await readFile(new URL('../site/mascot.webp', import.meta.url)), 'Mascot must be copied as binary without text conversion');
   assert.doesNotMatch(preview, /env\.DB|TURNSTILE_SECRET|BBS_ADMIN_KEY|fetch\(['"]https:/);
   const source = await readFile(new URL('../site/_worker.js', import.meta.url), 'utf8');
   assert.ok(source.includes('env.DB'));

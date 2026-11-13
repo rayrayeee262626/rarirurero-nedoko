@@ -16,7 +16,6 @@ async function renderList(id,kind,limit,heading='h2'){
  catch{element.innerHTML='<p class="mini" role="status">一覧を読み込めませんでした。時間をおいて再読み込みしてください。</p>'}
 }
 renderList('cms-featured','works',2,'h3');
-renderList('cms-recent','writings',3,'h3');
 renderList('cms-works','works');
 renderList('cms-projects','projects');
 renderList('cms-writings','writings');

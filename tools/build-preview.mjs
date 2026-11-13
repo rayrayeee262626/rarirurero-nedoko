@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, copyFile } from 'node:fs/promises';
 import './build.mjs';
 import { publicFiles, generatedFiles } from './site-files.mjs';
 
@@ -8,6 +8,10 @@ await mkdir(output, { recursive: true });
 const allowed = [...publicFiles, ...generatedFiles, '_headers'];
 if ((await readdir(output)).some(name => !allowed.includes(name))) throw new Error('Unexpected preview output; use a fresh directory.');
 for (const name of [...publicFiles, ...generatedFiles]) {
+  if (!/\.(html|js|css|json)$/.test(name)) {
+    await copyFile(new URL(`dist/${name}`, root), new URL(name, output));
+    continue;
+  }
   let text = await readFile(new URL(`dist/${name}`, root), 'utf8');
   if (name === '_worker.js') text = await readFile(new URL('tools/preview-worker.mjs', root), 'utf8');
   if (name.endsWith('.html')) {

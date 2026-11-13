@@ -1,5 +1,11 @@
 # 4コンテンツへの整理（試作・承認待ち）
 
+## 追加調整
+
+ユーザーの追加指定により、ホームの「書いたもの」カードと共通ナビは https://note.com/rcp262626 への直接リンクに変更。ホームの「noteに書いたもの」一覧は外した。「まずは、この作品から」・他の入口・BBS・X等は維持する。旧writings.html自体は既存リンクの互換用に残す。
+
+右上の丸い飾りは、添付キャラを元に上半身中心の丸枠向けに整えた画像へ置換した。画像はsite/mascot.webp（約212KB）としてGit管理し、ビルド・試作配信へバイナリのままコピーする。PCは172px、スマホは76pxの丸枠で表示する。
+
 作業ブランチ: `codex/reorganize-four-sections`。現行本番URLは https://rarirurero-nedoko.pages.dev/ を維持する。本番反映・mainへのマージ・D1変更・データ削除は行わず、既存の分離した試作プロジェクトのみへ配信する。
 
 試作配信成功: https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43520292536 。確認URL: https://rarirurero-nedoko-preview.pages.dev/ 。レビュー用Draft PR: https://github.com/rayrayeee262626/rarirurero-nedoko/pull/11 。
@@ -11,7 +17,7 @@
 | 入口 | URL | 管理元 |
 |---|---|---|
 | 作ったもの | works.html | content/projectsのstatusがpublished/completedの項目 |
-| 書いたもの | writings.html | content/writingsのnoteリンク・紹介文。本文はnote |
+| 書いたもの | https://note.com/rcp262626 | noteプロフィールへ直接リンク。本文はnote |
 | 現在進行中 | projects.html | content/projectsのstatusがdeveloping/pausedの項目 |
 | 掲示板（BBS） | bbs.html | 既存のWorker・D1・Turnstile |
 
@@ -52,7 +58,7 @@ description: "短い紹介文"
 
 紹介文・項目をCMSやGitHubで編集した場合も、以後は再ビルド・配信が必要。Codexが変更ブランチ→検証→試作→承認後本番の順で対応する。
 
-`tools/site-files.mjs` を公開ファイルの一覧とし、公開用HTML/JS/CSS14ファイルと生成JSON2ファイルだけをdistへ出力する。元Markdown、SQL、設定、運用資料、秘密値は配信しない。既存のDB初期SQLはビルドや配信から実行しない。
+`tools/site-files.mjs` を公開ファイルの一覧とし、公開用HTML/JS/CSS14ファイル・キャラ画像1ファイル・生成JSON2ファイルだけをdistへ出力する。元Markdown、SQL、設定、運用資料、秘密値は配信しない。既存のDB初期SQLはビルドや配信から実行しない。
 
 ## 維持したもの・検証
 
@@ -68,6 +74,6 @@ description: "短い紹介文"
 
 ## 本番反映の条件
 
-この試作をユーザーが承認してから、変更をmainへ統合し、生成JSONを含む16ファイルのrelease manifestを更新する。現在の `deployment/approved-release.json` は以前の承認版のままであり、新構成を誤って配信しようとするとファイル一覧・ハッシュ不一致で停止する。
+この試作をユーザーが承認してから、変更をmainへ統合し、生成JSON・画像を含む17ファイルのrelease manifestを更新する。現在の `deployment/approved-release.json` は以前の承認版のままであり、新構成を誤って配信しようとするとファイル一覧・ハッシュ不一致で停止する。
 
 実際の本番反映時は従来どおり直前の暗号化BBSバックアップ→既存binding確認→手動配信→静的ファイル・BBS読み取り確認を行う。記事データの削除やD1スキーマ変更は含めない。

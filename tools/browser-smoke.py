@@ -55,7 +55,7 @@ def route_request(route):
     assert file.is_relative_to(OUTPUT.resolve())
     if not file.is_file():
         return route.fulfill(status=404, body='missing')
-    mime = {'.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json'}[file.suffix]
+    mime = {'.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.webp': 'image/webp'}[file.suffix]
     return route.fulfill(body=file.read_bytes(), content_type=mime)
 
 with sync_playwright() as p:
@@ -72,8 +72,11 @@ with sync_playwright() as p:
         expect(page.locator('nav a')).to_have_count(6)
         expect(page.locator('#contents .tile h3')).to_have_text(expected_sections)
         expect(page.locator('#cms-featured .item-card')).to_have_count(len(catalog['works'][:2]))
-        expect(page.locator('#cms-recent .item-card')).to_have_count(len(catalog['writings'][:3]))
-        assert all(href.startswith('https://note.com/') for href in page.locator('#cms-recent a.item-card').evaluate_all('(nodes)=>nodes.map(n=>n.href)'))
+        expect(page.locator('#cms-recent')).to_have_count(0)
+        expect(page.locator('nav a', has_text='書いたもの')).to_have_attribute('href', 'https://note.com/rcp262626')
+        expect(page.locator('#contents a.tile').nth(1)).to_have_attribute('href', 'https://note.com/rcp262626')
+        expect(page.locator('.hero-mascot')).to_be_visible()
+        assert page.locator('.hero-mascot').evaluate('(image)=>image.complete && image.naturalWidth>0')
         assert page.locator('nav a[href="notes.html"]').count() == 0
         assert page.locator('a[href*="article.html"]').count() == 0
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
