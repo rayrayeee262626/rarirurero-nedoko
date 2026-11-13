@@ -130,11 +130,10 @@ def validate_sql(sql):
         if orphaned:
             raise ValueError('Invalid BBS reply relationship')
         indexes = {row[1] for row in db.execute('PRAGMA index_list(bbs_posts)')}
-        if not {'bbs_posts_roots', 'bbs_posts_rate'}.issubset(indexes):
-            raise ValueError('Expected BBS indexes not present')
         total, roots = db.execute('SELECT count(*),sum(parent_id IS NULL) FROM bbs_posts').fetchone()
         return {'posts': int(roots or 0), 'replies': total - int(roots or 0), 'total': total,
-                'integrity_ok': True, 'relationships_ok': True, 'expected_indexes_present': True}
+                'integrity_ok': True, 'relationships_ok': True,
+                'expected_indexes_present': {'bbs_posts_roots', 'bbs_posts_rate'}.issubset(indexes)}
     finally:
         db.close()
 
@@ -199,5 +198,7 @@ if __name__ == '__main__':
         print(str(error), file=sys.stderr)
         sys.exit(1)
     except Exception as error:
+        if isinstance(error, ValueError) and str(error) in ('Restored database integrity check failed', 'Expected BBS schema not present', 'Invalid BBS reply relationship'):
+            print(str(error), file=sys.stderr)
         print(f'D1 backup failed ({type(error).__name__}); API responses, URLs, SQL and credentials withheld. No production restore was attempted.', file=sys.stderr)
         sys.exit(1)

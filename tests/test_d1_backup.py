@@ -56,5 +56,11 @@ class D1BackupTests(unittest.TestCase):
         with self.assertRaises(backup.connect.ConnectionFailure):
             backup.rebuild_snapshot([{'type': 'table', 'name': 'unrelated', 'sql': 'CREATE TABLE unrelated(id)'}], [], None)
 
+    def test_missing_expected_indexes_does_not_prevent_preserving_actual_database(self):
+        schema = SCHEMA + b'\nDROP INDEX bbs_posts_roots; DROP INDEX bbs_posts_rate;'
+        verified = backup.validate_sql(schema)
+        self.assertFalse(verified['expected_indexes_present'])
+        self.assertTrue(verified['integrity_ok'])
+
 if __name__ == '__main__':
     unittest.main()
