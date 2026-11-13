@@ -1,6 +1,8 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest.mock import patch
+from types import SimpleNamespace
 
 spec = importlib.util.spec_from_file_location('release', Path(__file__).resolve().parents[1] / 'tools/deploy-production.py')
 release = importlib.util.module_from_spec(spec)
@@ -35,6 +37,13 @@ class ReleaseTests(unittest.TestCase):
         files = release.approved_files()
         self.assertEqual(len(files), 13)
         self.assertIn('_worker.js', files)
+
+    def test_public_health_check_keeps_body_and_rejects_foreign_redirect(self):
+        with patch.object(release.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=b'fixture\n200\nhttps://rarirurero-nedoko.pages.dev/')):
+            self.assertEqual(release.public_get('/'), b'fixture')
+        with patch.object(release.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=b'fixture\n200\nhttps://elsewhere.test/')):
+            with self.assertRaises(release.connect.ConnectionFailure):
+                release.public_get('/')
 
 if __name__ == '__main__':
     unittest.main()

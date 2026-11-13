@@ -55,10 +55,14 @@ def approved_files():
     return files
 
 def public_get(path):
-    with urllib.request.urlopen(urllib.request.Request(SITE + path, headers={'Cache-Control': 'no-cache'}), timeout=30) as response:
-        if response.status != 200 or not response.url.startswith(SITE + '/'):
-            raise connect.ConnectionFailure('Unexpected public response.')
-        return response.read()
+    result = subprocess.run(['curl', '--silent', '--fail', '--location', '--max-redirs', '2',
+        '--proto', '=https', '--proto-redir', '=https', '--max-time', '30',
+        '--max-filesize', '33554432', '--header', 'Cache-Control: no-cache',
+        '--write-out', '\n%{http_code}\n%{url_effective}', SITE + path], capture_output=True)
+    parts = result.stdout.rsplit(b'\n', 2)
+    if result.returncode or len(parts) != 3 or parts[1] != b'200' or not parts[2].decode().startswith(SITE + '/'):
+        raise connect.ConnectionFailure('Public read-only health check failed; response details withheld.')
+    return parts[0]
 
 def public_posts(data):
     return {(kind, row['id']): row for kind in ('posts', 'replies') for row in data[kind]}
@@ -97,9 +101,11 @@ def main():
     token = os.environ['CLOUDFLARE_API_TOKEN'].strip()
     account = os.environ['CLOUDFLARE_ACCOUNT_ID'].strip()
     target = connect.discover(token, account)
+    print('Release preflight: production binding verified.')
     path = f'/accounts/{account}/pages/projects/{connect.PROJECT}'
     before = connect.api_get(path, token)
     branch, old = check_project(before)
+    print('Release preflight: production branch and rollback target verified.')
     settings = fingerprint(before)
     config_before = json.loads(public_get('/api/bbs/config'))
     if config_before.get('ready') is not True:
@@ -108,7 +114,13 @@ def main():
     print('Approved files, backup, production target, rollback target and BBS readiness verified.')
     command = ['npm', 'exec', '--yes', '--package=wrangler@4.143.0', '--', 'wrangler', 'pages', 'deploy', 'dist',
                '--project-name=' + connect.PROJECT, '--branch=' + branch]
-    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=240)
+    try:
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=240)
+    except subprocess.TimeoutExpired:
+        current = connect.api_get(path, token)
+        if current.get('canonical_deployment', {}).get('id') != old:
+            rollback(account, token, old)
+        raise connect.ConnectionFailure('Production upload timed out; deployment state checked.') from None
     if result.returncode:
         current = connect.api_get(path, token)
         if current.get('canonical_deployment', {}).get('id') != old:
@@ -145,6 +157,6 @@ if __name__ == '__main__':
     except connect.ConnectionFailure as error:
         print(str(error), file=sys.stderr)
         sys.exit(1)
-    except Exception:
-        print('Production release stopped; settings, post content and credentials withheld.', file=sys.stderr)
+    except Exception as error:
+        print(f'Production release stopped ({type(error).__name__}); settings, post content and credentials withheld.', file=sys.stderr)
         sys.exit(1)
