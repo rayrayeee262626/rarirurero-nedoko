@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import worker from '../tools/preview-worker.mjs';
+import { publicFiles, generatedFiles } from '../tools/site-files.mjs';
 
 const env = { get DB() { throw new Error('Preview must never access a database'); } };
 test('preview serves sample posts and disables every mutation without accessing DB', async () => {
@@ -19,7 +20,7 @@ test('preview serves sample posts and disables every mutation without accessing 
 test('preview build excludes counter, third-party scripts and original worker', async () => {
   const root = new URL('../preview-dist/', import.meta.url);
   const files = await readdir(root);
-  assert.equal(files.length, 14);
+  assert.equal(files.length, publicFiles.length + generatedFiles.length + 1);
   for (const file of files.filter(f => f.endsWith('.html'))) {
     const text = await readFile(new URL(file, root), 'utf8');
     assert.ok(text.includes('preview-banner'));

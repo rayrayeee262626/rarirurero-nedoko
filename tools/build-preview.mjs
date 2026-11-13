@@ -1,12 +1,13 @@
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
-import { publicFiles } from './build.mjs';
+import './build.mjs';
+import { publicFiles, generatedFiles } from './site-files.mjs';
 
 const root = new URL('../', import.meta.url);
 const output = new URL('preview-dist/', root);
 await mkdir(output, { recursive: true });
-const allowed = [...publicFiles, '_headers'];
+const allowed = [...publicFiles, ...generatedFiles, '_headers'];
 if ((await readdir(output)).some(name => !allowed.includes(name))) throw new Error('Unexpected preview output; use a fresh directory.');
-for (const name of publicFiles) {
+for (const name of [...publicFiles, ...generatedFiles]) {
   let text = await readFile(new URL(`dist/${name}`, root), 'utf8');
   if (name === '_worker.js') text = await readFile(new URL('tools/preview-worker.mjs', root), 'utf8');
   if (name.endsWith('.html')) {
@@ -24,6 +25,6 @@ for (const name of publicFiles) {
 }
 await writeFile(new URL('_headers', output), `/*
   X-Robots-Tag: noindex, nofollow
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; img-src 'self' data:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 `);
 console.log('Prepared isolated preview: no production BBS, counter, X scripts, or external fonts.');
