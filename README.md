@@ -10,6 +10,7 @@ Cloudflare Pages Advanced Mode（静的サイト + `_worker.js`）、D1、Turnst
 - `docs/integration-plan.md`: 差分、段階的な統合計画と未確認事項。
 - `docs/content-and-backups.md`: 公開下書きの注意とソース・DBのバックアップ手順。
 - `docs/bbs-backup-status.md`: 掲示板の救済用コピーと、D1完全バックアップに残る作業。
+- `docs/daily-operations.md`: 試作URL、毎日の暗号化バックアップ、Codexからの更新手順。
 - `docs/source-zip/`: ZIP付属説明書とSHA-256。説明書は当時の記録であり、本番操作の指示ではない。
 - `tools/` / `tests/`: デプロイを行わないビルドとローカル検証。
 
@@ -35,4 +36,4 @@ npm run build
 - Cloudflare側に `TURNSTILE_SITE_KEY`、secretの `TURNSTILE_SECRET` と `BBS_ADMIN_KEY` が必要。値をGitへ入れない。
 - FC2カウンター・X埋め込み・外部noteリンクを維持。
 
-現時点でデプロイ用CIや本番用Wrangler設定は追加していない。`main`へのマージ、Cloudflare設定変更、デプロイ、D1変更は別途の作業。GitHubからの配信方式は既存Cloudflareプロジェクトの設定確認後に決める。
+本番用デプロイworkflowは追加していない。別プロジェクトへの試作配信と、日次の暗号化BBSバックアップをGitHub Actionsで行う。本番への反映・D1復元は別途の作業。
