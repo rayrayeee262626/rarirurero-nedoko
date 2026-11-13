@@ -2,6 +2,10 @@
 
 作業ブランチ: `codex/reorganize-four-sections`。現行本番URLは https://rarirurero-nedoko.pages.dev/ を維持する。本番反映・mainへのマージ・D1変更・データ削除は行わず、既存の分離した試作プロジェクトのみへ配信する。
 
+試作配信成功: https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43520292536 。確認URL: https://rarirurero-nedoko-preview.pages.dev/ 。レビュー用Draft PR: https://github.com/rayrayeee262626/rarirurero-nedoko/pull/11 。
+
+配信後もGETで生成カタログ（作品2件・制作中4件・note紹介3件）、保存版JSON（公開記事1件）、旧article/notes URL、試作BBSの投稿停止を確認。本番ホーム・CSSは現行承認版のハッシュと一致し、未変更であることを確認した。
+
 ## 新しい構成
 
 | 入口 | URL | 管理元 |
