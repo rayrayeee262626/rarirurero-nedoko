@@ -1,0 +1,47 @@
+name: Publish isolated preview (never production)
+
+on:
+  push:
+    branches: [codex/enable-backups-and-preview]
+    paths:
+      - .github/workflows/preview.yml
+      - site/**
+      - tools/build-preview.mjs
+      - tools/preview-worker.mjs
+      - tools/prepare-preview-project.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: isolated-site-preview
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Validate and build preview without secrets
+        run: |
+          npm run check
+          npm test
+          npm run build:preview
+          node tests/preview.test.mjs
+      - name: Install pinned Cloudflare CLI without secrets
+        run: npm exec --yes --package=wrangler@4.143.0 -- wrangler --version
+      - name: Verify separate preview project has no database or secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f76e5aa4c68f52aa641c4e00da7be273
+        run: python3 tools/prepare-preview-project.py
+      - name: Upload to preview project only
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f76e5aa4c68f52aa641c4e00da7be273
+          WRANGLER_SEND_METRICS: 'false'
+        run: npm exec --yes --package=wrangler@4.143.0 -- wrangler pages deploy preview-dist --project-name=rarirurero-nedoko-preview --branch=preview
