@@ -48,7 +48,7 @@ node tests/preview.test.mjs
 
 - 本番URLは https://rarirurero-nedoko.pages.dev/ を維持する。
 - 試作は https://rarirurero-nedoko-preview.pages.dev/ 。本番D1や秘密値に接続せず、BBSはサンプル表示・投稿削除不可。カウンターは加算しない。
-- 本番配信は明示承認後の手動workflowのみ。`deployment/approved-release.json` は前回承認版のままなので、今回の再構成を承認するまで更新しない。
+- 本番配信は明示承認後の手動workflowのみ。`deployment/approved-release.json` にはユーザー承認済み17ファイルのハッシュを記録する。今回の再構成は2026-11-13に承認・本番反映済み。
 - BBSの暗号化バックアップは既存の日次workflowを維持。D1スキーマをビルドから適用しない。
 - `TURNSTILE_SECRET`、`BBS_ADMIN_KEY`、接続トークンをGitへ入れない。
 
