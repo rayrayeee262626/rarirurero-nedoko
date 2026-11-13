@@ -47,6 +47,7 @@ def discover(token):
             break
     else:
         raise ConnectionFailure('Account list exceeded discovery limit.')
+    print(f'Accessible accounts returned by Cloudflare: {len(accounts)}')
     candidates = []
     for account in accounts:
         account_id = account.get('id', '')
@@ -56,7 +57,7 @@ def discover(token):
         if project:
             candidates.append((account_id, project))
     if len(candidates) != 1:
-        raise ConnectionFailure('Expected exactly one accessible target Pages project; check account scope.')
+        raise ConnectionFailure(f'Target Pages project matches: {len(candidates)}. No deployment or database operation performed.')
     account_id, project = candidates[0]
     if project.get('name') != PROJECT or project.get('subdomain') != PROJECT + '.pages.dev':
         raise ConnectionFailure('Project identity mismatch.')
