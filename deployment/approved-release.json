@@ -1,19 +1,23 @@
 {
-  "approved_source_commit": "c4443136f97f75b3143f5379e410caf623275a5d",
+  "approved_source_commit": "9b929d49235199a34f545a590e6dcdd6b3161f46",
   "project": "rarirurero-nedoko",
   "files": {
     "_worker.js": "9d58b82965d4f61071a2b522699fa94f96d49f2085b9c99e97f54f9810aa4067",
-    "about.html": "befeaa177cc7e3dd3169e2377ee6ef02d3c0e3850daf07671593788a936db526",
-    "app.js": "edaf6eab17d4a9aedaf50c6efb0e2b309343ea692098cad59767de17fca046e5",
-    "article.html": "ddee3a0e0b165425de809110b839b64c4e5f7e927dafc836366638302656a220",
+    "about.html": "2a9ac8e87d25b2b11c1dca9f2aab32f84e02b4bbc9ca7ef93924cf780e261904",
+    "app.js": "e0bc19014af2b295e2b52eab581b3cdcf563478dbddc8e36400fb99ebac3c44d",
+    "article.html": "250ffa5c75bbab80d4a28e1da4eab01814fa2f186d3e95b8e62c5a566e89e1f4",
     "bbs.html": "0f70adce421a886e1fbaeea34dd924462b9f685b7b1405a0d5b5b3c4954013e5",
     "bbs.js": "a1debdc2ead83fd04d809afbb0d3a1f534ccb8fdd61a319aa32eddd416ca610a",
-    "content.js": "9824b06e64abd791d39ce9ecae144d5429796d9b936880278ea3ef0791ba39ba",
-    "index.html": "19766d291116eb159d57018019f137c42d8cc20d3bff8dbe2764516ad51a052d",
-    "notes.html": "38ef50af71f59e1bb531058ea4994673e0c65a5979f73c627472fe961d5553c2",
-    "projects.html": "657c603b5c6efc1efbfdbeee613ded6c8d011b5d5e0ae6cf77818db815345653",
-    "styles.css": "c1e57864549d4f573ba0f5e375f0e2de836fb36cec5c126bce701ad99d86904d",
+    "catalog.json": "0ef5336acdffe2a218a170475366461c6898a83f8d4112b13eb1396e24fdf033",
+    "content.js": "f421d76d5d3659e3571de5c081d3756357d05c1cad929798833f925c054e4fcd",
+    "index.html": "3d64e9e81f9a5c9c81f9c57b6e2cc64874e96f73f4384c57e8823efde2845892",
+    "legacy-posts.json": "18a5ef927f095af896b2f7da32f534b195031e6086961afd13025ab4bcb66e1f",
+    "legacy.js": "4b582a0b1146e3569db0984165be41467f9578a52d792ecae89f0404bf934b25",
+    "mascot.webp": "ca0cc127c215fedb4d830dcb8a8ecfa5300b91064b912d295f85ba771832190b",
+    "notes.html": "6c7badec021d2dcc48cb1d0b8c83a7f443ea2ded8830e06c37c92a4bd1e05204",
+    "projects.html": "62c56f0d617149fcd5eb113c67c198846b36693073e74587426cc24ff6f9548b",
+    "styles.css": "fd8920dbd2111f266d08de8deccb9d77a433012401e420e68873c9c853155b70",
     "works.html": "dd9d79b316eb41fae0866009c7f238fe33053312f5befbe17da6f4fc14c12426",
-    "writings.html": "f69986e1485f5805be423a6ae48208ec7d3c0d8ab2d8bc71304906a5576b3943"
+    "writings.html": "335930eff6987c10850ee654f70da8bd08d67afab015c6cbc1bcce6ccc5322c2"
   }
 }
