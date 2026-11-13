@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node tools/build.mjs",
     "check": "node tools/check.mjs",
-    "test": "node tests/worker.test.mjs"
+    "test": "node tests/worker.test.mjs",
+    "backup:source": "node tools/backup-source.mjs"
   },
   "engines": { "node": ">=22" }
 }

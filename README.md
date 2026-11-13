@@ -8,6 +8,7 @@ Cloudflare Pages Advanced Mode（静的サイト + `_worker.js`）、D1、Turnst
 - `.pages.yml` / `content/`: 既存のCMS設定・記事。場所・内容は維持。
 - `database/schema.sql`: ZIPのD1初期定義。既存本番DBには実行しない。
 - `docs/integration-plan.md`: 差分、段階的な統合計画と未確認事項。
+- `docs/content-and-backups.md`: 公開下書きの注意とソース・DBのバックアップ手順。
 - `docs/source-zip/`: ZIP付属説明書とSHA-256。説明書は当時の記録であり、本番操作の指示ではない。
 - `tools/` / `tests/`: デプロイを行わないビルドとローカル検証。
 
