@@ -16,7 +16,7 @@ for (const name of publicFiles) {
     text = text.replace('<body>', '<body><aside class="preview-banner">試作版です。掲示板はサンプル表示・投稿停止中です。 <a href="https://rarirurero-nedoko.pages.dev/">公開中のサイトへ →</a></aside>');
   }
   if (name === 'styles.css') {
-    text = text.replace(/@import url\([^;]+;/g, '');
+    text = text.replace(/@import\s+url\([^)]*\)\s*;/g, '');
     text += '\n.preview-banner{padding:10px 20px;background:#fff1cc;border-bottom:1px solid #dfc88f;text-align:center;font-size:13px}.preview-banner a{text-decoration:underline;color:#315d45}\n';
   }
   if (name === 'bbs.js') text = text.replace('現在、掲示板の初期設定中です。投稿はまだできません。', '試作版では投稿を停止しています。本番の投稿には影響しません。');
