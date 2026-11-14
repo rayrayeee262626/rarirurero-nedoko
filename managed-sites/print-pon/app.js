@@ -1,7 +1,7 @@
 /* ぷりぽんっ -Print PON!- | All exercises and PDFs are generated locally. */
 (()=>{'use strict';
 const $=s=>document.querySelector(s);
-const el={left:$('#leftDigits'),right:$('#rightDigits'),count:$('#questionCount'),answers:$('#includeAnswers'),preview:$('#previewSheet'),notice:$('#notice'),hint:$('#previewHint'),print:$('#printArea'),pdf:$('#pdfBtn'),printBtn:$('#printBtn'),gen:$('#generateBtn'),tabProblem:$('#previewProblemTab'),tabAnswer:$('#previewAnswerTab'),preset:$('#gradePresets'),remainderGroup:$('#remainderGroup')};
+const el={confirm:$('#confirmBtn'),stage:$('#previewStage'),left:$('#leftDigits'),right:$('#rightDigits'),count:$('#questionCount'),answers:$('#includeAnswers'),preview:$('#previewSheet'),notice:$('#notice'),hint:$('#previewHint'),print:$('#printArea'),pdf:$('#pdfBtn'),printBtn:$('#printBtn'),gen:$('#generateBtn'),tabProblem:$('#previewProblemTab'),tabAnswer:$('#previewAnswerTab'),preset:$('#gradePresets'),remainderGroup:$('#remainderGroup')};
 const {makeProblems}=globalThis.PrintPonGenerator;
 const topic=JSON.parse(document.querySelector('#topicConfig')?.textContent||'null');
 const URL_SITE='https://print-pon.pages.dev/'+(topic?topic.slug+'/':'');
@@ -11,7 +11,9 @@ function track(event){
   // Fixed action and public page ID only: no cookies, settings, problems or identifiers.
   fetch('/api/events',{method:'POST',credentials:'omit',referrerPolicy:'no-referrer',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({event,page:topic?topic.slug:'home'})}).catch(()=>{});
 }
-let questions=[],previewMode='problem';
+let questions=[],previewMode='problem',reviewed=false;
+function invalidatePreview(){reviewed=false;el.stage.hidden=true;el.stage.open=false;el.pdf.disabled=true;el.printBtn.disabled=true;}
+function showPreview(){if(!questions.length)return;reviewed=true;previewMode='problem';renderPreview();renderPrintable();el.stage.hidden=false;el.stage.open=true;el.pdf.disabled=false;el.printBtn.disabled=false;el.stage.querySelector('summary').focus({preventScroll:true});el.stage.scrollIntoView({block:'start',behavior:'instant'});}
 const grades={
  'pre':{op:'add',left:1,right:1,count:10,remainderMode:'none'},
  '1':{op:'add',left:1,right:1,count:20,remainderMode:'none'},
@@ -63,8 +65,8 @@ function renderPrintPage(withAnswers){const page=document.createElement('section
   });grid.appendChild(wrap);});page.appendChild(grid);page.appendChild(footerDOM('print-foot'));return page;
 }
 function renderPrintable(){el.print.replaceChildren();if(!questions.length)return;el.print.appendChild(renderPrintPage(false));if(el.answers.checked)el.print.appendChild(renderPrintPage(true));}
-function generate(action=false){try{questions=makeProblems(settings());renderPreview();renderPrintable();el.pdf.disabled=false;el.printBtn.disabled=false;status('このまま保存・印刷できます。','success');if(action)track('generate');return true;}
-  catch(error){questions=[];el.print.replaceChildren();el.preview.replaceChildren();el.pdf.disabled=true;el.printBtn.disabled=true;el.hint.textContent='この条件では作れません。設定を見直してね。';status(error.message,'error');return false;}
+function generate(action=false){invalidatePreview();try{questions=makeProblems(settings());renderPreview();renderPrintable();el.confirm.disabled=false;status('できあがりを確認してから保存・印刷できます。','success');if(action)track('generate');return true;}
+  catch(error){el.confirm.disabled=true;questions=[];el.print.replaceChildren();el.preview.replaceChildren();el.pdf.disabled=true;el.printBtn.disabled=true;el.hint.textContent='この条件では作れません。設定を見直してね。';status(error.message,'error');return false;}
 }
 function drawQr(ctx,x,y,side){const matrix=globalThis.PRINT_PON_QR;const size=matrix.length,pad=4,unit=side/(size+pad*2);
   ctx.fillStyle='#fff';ctx.fillRect(x,y,side,side);ctx.fillStyle='#202024';for(let row=0;row<size;row++)for(let col=0;col<size;col++)if(matrix[row][col]==='1')ctx.fillRect(x+(col+pad)*unit,y+(row+pad)*unit,Math.ceil(unit*100)/100,Math.ceil(unit*100)/100);
@@ -97,7 +99,7 @@ function buildPdf(canvases){const enc=new TextEncoder();let out=[],offset=0,xref
  let start=offset;put(`xref\n0 ${count+1}\n0000000000 65535 f \n`);for(let i=1;i<=count;i++)put(`${String(xref[i]).padStart(10,'0')} 00000 n \n`);put(`trailer\n<< /Size ${count+1} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF`);
  return new Blob(out,{type:'application/pdf'});}
 
-function downloadPdf(){if(!questions.length&&!generate())return;el.pdf.disabled=true;el.pdf.textContent='PDFを作成中…';
+function downloadPdf(){if(!reviewed){showPreview();return;}if(!questions.length&&!generate())return;el.pdf.disabled=true;el.pdf.textContent='PDFを作成中…';
   try{const canvases=[drawPdfPage(false)];if(el.answers.checked)canvases.push(drawPdfPage(true));const blob=buildPdf(canvases);const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=(topic?topic.slug.replaceAll('/','-'):'puripon-keisan')+'-'+new Date().toISOString().slice(0,10)+'.pdf';document.body.appendChild(link);link.click();track('pdf');link.remove();setTimeout(()=>URL.revokeObjectURL(link.href),15000);status('PDFを保存しました。ダウンロードフォルダを確認してね。','success');}
   catch(error){console.error(error);status('PDFの作成に失敗しました。印刷画面から「PDFに保存」も試してね。','error');}
   finally{el.pdf.disabled=false;el.pdf.innerHTML='<span aria-hidden="true">↓</span> PDFを保存';}
@@ -119,9 +121,10 @@ for(const btn of el.preset?.querySelectorAll('[data-grade]')||[])btn.addEventLis
 });
 el.tabProblem.addEventListener('click',()=>{previewMode='problem';renderPreview();});
 el.tabAnswer.addEventListener('click',()=>{if(!el.answers.checked)return;previewMode='answer';renderPreview();});
-el.answers.addEventListener('change',()=>{renderPreview();renderPrintable();});
-el.gen.addEventListener('click',()=>{generate(true);});el.pdf.addEventListener('click',downloadPdf);
-let lastPrintAt=0;el.printBtn.addEventListener('click',()=>{const now=Date.now();if(now-lastPrintAt<800)return;lastPrintAt=now;if(!questions.length&&!generate())return;renderPrintable();track('print');window.print();});
+el.answers.addEventListener('change',()=>{invalidatePreview();renderPreview();renderPrintable();status('設定を変更しました。もう一度プリントを確認してください。');});
+el.confirm.addEventListener('click',showPreview);
+el.gen.addEventListener('click',()=>{if(generate(true))showPreview();});el.pdf.addEventListener('click',downloadPdf);
+let lastPrintAt=0;el.printBtn.addEventListener('click',()=>{if(!reviewed){showPreview();return;}const now=Date.now();if(now-lastPrintAt<800)return;lastPrintAt=now;if(!questions.length&&!generate())return;renderPrintable();track('print');window.print();});
 if(topic){const p=topic.settings;document.querySelector(`input[name="operation"][value="${p.op}"]`).checked=true;el.left.value=p.left;el.right.value=p.right;el.count.value=p.count;document.querySelector(`input[name="remainderMode"][value="${p.remainderMode}"]`).checked=true;}
 $('#year').textContent=new Date().getFullYear();updateRemainderVisibility();generate();
 })();
