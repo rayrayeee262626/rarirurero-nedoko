@@ -54,3 +54,7 @@
 .preview-sheet .sheet-question.has-remainder{letter-spacing:-.055em;font-size:clamp(6px,.9vw,10px)}
 @media(max-width:610px){.remainder-choices .choice span{font-size:11px;padding:10px 3px}.preview-sheet .sheet-question.has-remainder{font-size:clamp(6px,1.9vw,8px)}}
 @media print{.print-page .print-q.has-remainder{font-size:11pt;letter-spacing:-.025em}.print-page.count-50 .print-q.has-remainder{font-size:9pt;letter-spacing:-.04em}}
+
+/* Keep decorative paper within the viewport without hiding content overflow. */
+@media screen and (min-width:611px) and (max-width:850px){.hero-art{margin-right:30px}}
+@media screen and (max-width:360px){.header-inner{flex-wrap:wrap;gap:6px;padding-top:10px;padding-bottom:10px}.top-tag{margin-left:auto}}
