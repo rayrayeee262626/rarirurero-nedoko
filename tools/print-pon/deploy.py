@@ -31,16 +31,19 @@ try:
  assert ((new.get('deployment_trigger') or {}).get('metadata') or {}).get('commit_hash')==sha,'Unexpected production commit'
  for attempt in range(6):
   try:
-   with urllib.request.urlopen('https://print-pon.pages.dev/?release='+sha,timeout=30) as r:html=r.read().decode()
+   def public(url,expected=200):
+    result=subprocess.run(['curl','--location','--silent','--show-error','--max-time','30','--write-out','\\n%{http_code}',url],capture_output=True,check=True)
+    body,status=result.stdout.rsplit(b'\n',1)
+    assert int(status)==expected,'Unexpected public HTTP status '+status.decode()
+    return body
+   html=public('https://print-pon.pages.dev/?release='+sha).decode()
    assert '小学生の計算プリントを無料作成・PDF印刷' in html,'Title not updated'
    scripts=Scripts();scripts.feed(html)
    assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')==1,'Analytics injection must occur exactly once'
    assert 'google-site-verification' in html,'Ownership verification missing'
    for file in ['robots.txt','sitemap.xml','app.js','generator.js','ogp.png','privacy/']:
-    with urllib.request.urlopen('https://print-pon.pages.dev/'+file,timeout=30) as r:assert r.status==200 and len(r.read())>0
-   try:urllib.request.urlopen('https://print-pon.pages.dev/no-such-page-release-check',timeout=30)
-   except urllib.error.HTTPError as e:assert e.code==404
-   else:raise AssertionError('Missing URL should return 404')
+    assert len(public('https://print-pon.pages.dev/'+file))>0
+   public('https://print-pon.pages.dev/no-such-page-release-check',404)
    break
   except Exception:
    if attempt==5:raise
