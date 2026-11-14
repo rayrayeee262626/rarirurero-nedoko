@@ -18,16 +18,16 @@
   // 3-digit ÷ 3-digit: omit quotient 1 to prevent n ÷ n dominating the sheet.
   function minQuotient(left,right){return left===3&&right===3?2:1;}
   function remainderBounds(A,b,q){return [Math.max(1,A.min-b*q),Math.min(b-1,A.max-b*q)];}
-  function divisionCapacity(left,right,mode){
+  function divisionCapacity(left,right,mode,maxQuotient=Infinity){
     const A=range(left),B=range(right),qFloor=minQuotient(left,right);
     let exact=0,withRemainder=0;
     for(let b=B.min;b<=B.max;b++){
       if(mode!=='only'){
-        const low=Math.max(qFloor,Math.ceil(A.min/b)),high=Math.floor(A.max/b);
+        const low=Math.max(qFloor,Math.ceil(A.min/b)),high=Math.min(maxQuotient,Math.floor(A.max/b));
         if(high>=low)exact+=high-low+1;
       }
       if(mode!=='none'&&b>1){
-        const low=Math.max(qFloor,Math.floor(A.min/b)),high=Math.floor(A.max/b);
+        const low=Math.max(qFloor,Math.floor(A.min/b)),high=Math.min(maxQuotient,Math.floor(A.max/b));
         for(let q=low;q<=high;q++){
           const [rLo,rHi]=remainderBounds(A,b,q);
           if(rHi>=rLo)withRemainder+=rHi-rLo+1;
@@ -36,27 +36,27 @@
     }
     return {exact,withRemainder,total:exact+withRemainder};
   }
-  function capacity(op,left,right,remainderMode='none'){
+  function capacity(op,left,right,remainderMode='none',maxQuotient=Infinity){
     const A=range(left),B=range(right);
     if(op==='add'||op==='mul')return(A.max-A.min+1)*(B.max-B.min+1);
     if(op==='sub'){let total=0;for(let b=B.min;b<=Math.min(B.max,A.max);b++)total+=A.max-Math.max(A.min,b)+1;return total;}
-    if(op==='div')return divisionCapacity(left,right,remainderMode).total;
+    if(op==='div')return divisionCapacity(left,right,remainderMode,maxQuotient).total;
     throw Error('計算の種類を選んでね。');
   }
   // A bucket stores one entry per exact expression or per possible quotient/divisor
   // combination with nonzero remainder. We sample remainder values lazily, avoiding
   // hundreds of thousands of objects for the 3-digit/3-digit case.
-  function divisionPools(left,right,mode,random){
+  function divisionPools(left,right,mode,random,maxQuotient=Infinity){
     const A=range(left),B=range(right),qFloor=minQuotient(left,right);
     const pools={exact:new Map(),remainder:new Map()};
     function bucket(type,q){if(!pools[type].has(q))pools[type].set(q,[]);return pools[type].get(q);}
     for(let b=B.min;b<=B.max;b++){
       if(mode!=='only'){
-        const qMin=Math.max(qFloor,Math.ceil(A.min/b)),qMax=Math.floor(A.max/b);
+        const qMin=Math.max(qFloor,Math.ceil(A.min/b)),qMax=Math.min(maxQuotient,Math.floor(A.max/b));
         for(let q=qMin;q<=qMax;q++)bucket('exact',q).push(make('div',b*q,b));
       }
       if(mode!=='none'&&b>1){
-        const qMin=Math.max(qFloor,Math.floor(A.min/b)),qMax=Math.floor(A.max/b);
+        const qMin=Math.max(qFloor,Math.floor(A.min/b)),qMax=Math.min(maxQuotient,Math.floor(A.max/b));
         for(let q=qMin;q<=qMax;q++){
           const [lo,hi]=remainderBounds(A,b,q);
           if(lo<=hi)bucket('remainder',q).push({b,q,lo,hi,used:new Set()});
@@ -76,15 +76,17 @@
   function makeProblems(settings,random=Math.random){
     const {op,left,right,count}=settings;
     const remainderMode=settings.remainderMode||'none';
+    const maxQuotient=settings.maxQuotient??Infinity;
+    if(maxQuotient!==Infinity&&(!Number.isInteger(maxQuotient)||maxQuotient<1))throw Error('商の上限を確認してください。');
     if(!['add','sub','mul','div','mix'].includes(op))throw Error('計算の種類を選んでね。');
     if(![10,20,30,50].includes(count))throw Error('問題数を選んでね。');
     if(!remainderModes.includes(remainderMode))throw Error('あまりの設定を選んでね。');
     const operations=op==='mix'?['add','sub','mul','div']:[op];
-    const possible=operations.filter(k=>capacity(k,left,right,remainderMode)>0);
-    const total=possible.reduce((sum,k)=>sum+capacity(k,left,right,remainderMode),0);
+    const possible=operations.filter(k=>capacity(k,left,right,remainderMode,maxQuotient)>0);
+    const total=possible.reduce((sum,k)=>sum+capacity(k,left,right,remainderMode,maxQuotient),0);
     if(!possible.length)throw Error('このけた数では条件に合う問題を作れません。わられる数を大きくするか、わる数を小さくしてね。');
     if(total<count)throw Error(`この設定で重複なしに作れる問題は最大${total}問です。問題数を減らすか、けた数・あまりの設定を変えてね。`);
-    const pools=possible.includes('div')?divisionPools(left,right,remainderMode,random):null;
+    const pools=possible.includes('div')?divisionPools(left,right,remainderMode,random,maxQuotient):null;
     const used=new Set(),output=[],nonDivPools=new Map();
     const divTypeCount={exact:0,remainder:0},divQuotCount={exact:new Map(),remainder:new Map()};
     function pullDivision(){

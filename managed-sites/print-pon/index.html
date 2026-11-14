@@ -27,12 +27,12 @@
        <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
                data-cf-beacon='{ "token": "CLOUDFLARE_WEB_ANALYTICS_TOKEN_HERE" }'></script>
        The placeholder is intentionally NOT active. -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="shell header-inner">
-      <a href="./" class="brand" aria-label="ぷりぽんっ ホーム">
+      <a href="/" class="brand" aria-label="ぷりぽんっ ホーム">
         <span class="brand-paper" aria-hidden="true"><svg viewBox="0 0 62 68" width="54" height="58"><path d="M13 5h29l12 12v43a4 4 0 0 1-4 4H13a5 5 0 0 1-5-5V10a5 5 0 0 1 5-5Z" fill="#fff" stroke="#302f35" stroke-width="3"/><path d="M42 5v13h12" fill="none" stroke="#302f35" stroke-width="3" stroke-linejoin="round"/><path d="M19 32h24M19 43h15" stroke="#79b6e7" stroke-width="4" stroke-linecap="round"/><path d="m31 18 4-8 4 8 8 4-8 4-4 8-4-8-8-4Z" fill="#ffd35a" stroke="#302f35" stroke-width="2"/></svg></span>
         <span class="brand-type"><span class="brand-jp"><span>ぷ</span><span>り</span><span>ぽ</span><span>ん</span><span>っ</span></span><span class="brand-en">- Print PON! -</span></span>
       </a>
@@ -41,17 +41,20 @@
   </header>
 
   <main class="shell">
+    <a class="skip-link" href="#worksheet">プリント作成へ進む</a>
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">おうちでも、学校でも、塾でも。</p>
         <h1 id="hero-title">計算プリントが、<br><span class="hero-highlight">ぽんっ！</span>とできる。</h1>
         <p class="hero-description">小学生向けの<strong>無料計算プリント</strong>を、登録なしで作成。<br>たし算・ひき算・かけ算・わり算を、学年や1〜3桁の設定で練習できます。<br>10・20・30・50問から選んで、答えつきの<strong>A4 PDFを保存・印刷</strong>できます。</p>
         <div class="hero-pills"><span>✓ 何度でも無料</span><span>✓ PDF保存</span><span>✓ 答えもつくれる</span></div>
+        <nav class="hero-links" aria-label="プリントの選び方"><a href="#topics">学年・単元から選ぶ</a><a href="#worksheet">自由に設定して作る</a></nav>
       </div>
       <div class="hero-art" aria-hidden="true"><div class="paper paper-back"></div><div class="paper paper-front"><div class="paper-title">けいさん プリント <span>★</span></div><div class="paper-item">① 24 × 3 = <i></i></div><div class="paper-item">② 15 + 8 = <i></i></div><div class="paper-item">③ 36 ÷ 4 = <i></i></div><div class="paper-item">④ 42 − 7 = <i></i></div><div class="paper-badge">ぽんっ！</div></div><span class="star star-one">✳</span><span class="star star-two">✦</span><span class="star star-three">✳</span></div>
     </section>
 
-    <section class="workspace" aria-label="プリント作成">
+    <!-- TOPIC_DIRECTORY -->
+    <section id="worksheet" class="workspace" aria-label="プリント作成">
       <div class="panel controls">
         <div class="panel-title"><span class="number-bubble">1</span><div><h2>もんだいをえらぼう</h2><p>好きな計算と数字をえらんでね</p></div></div>
         <section class="grade-picker" aria-labelledby="grade-title">
@@ -91,20 +94,23 @@
         </details>
         <label class="check-row"><input id="includeAnswers" type="checkbox" checked><span>答えのページもつける</span></label>
         <div class="notice" id="notice" role="status" aria-live="polite">設定を変えるとプレビューもすぐ更新されるよ。</div>
-        <button id="generateBtn" class="btn btn-primary" type="button"><span aria-hidden="true">↻</span> 同じ設定で別の問題にする</button>
+        <a class="preview-jump" href="#pdfBtn">できあがり・保存・印刷へ ↓</a>
+        <button id="generateBtn" class="btn btn-primary" type="button"><span aria-hidden="true">↻</span> 同じ条件でもう1枚つくる</button>
       </div>
       <div class="panel preview-panel">
         <div class="panel-title"><span class="number-bubble blue">2</span><div><h2>できあがりをチェック</h2><p>プリントの見本だよ</p></div></div>
+        <div class="download-actions">
+          <button class="btn btn-download" type="button" id="pdfBtn"><span aria-hidden="true">↓</span> PDFを保存</button>
+          <button class="btn btn-print" type="button" id="printBtn"><span aria-hidden="true">▣</span> そのまま印刷</button>
+        </div>
+        <p class="quick-guide">見本は作成済みです。そのまま保存・印刷できます。答えは別ページにつきます。</p>
         <div class="preview-tabs" role="tablist" aria-label="プレビューの種類">
           <button type="button" id="previewProblemTab" class="is-selected" role="tab" aria-selected="true">問題</button>
           <button type="button" id="previewAnswerTab" role="tab" aria-selected="false">答え</button>
         </div>
         <div class="preview-frame"><div class="preview-sheet" id="previewSheet" aria-label="計算プリントのプレビュー"></div></div>
         <div class="preview-hint" id="previewHint">20問の計算プリントができたよ！</div>
-        <div class="download-actions">
-          <button class="btn btn-download" type="button" id="pdfBtn"><span aria-hidden="true">↓</span> PDFを保存</button>
-          <button class="btn btn-print" type="button" id="printBtn"><span aria-hidden="true">▣</span> そのまま印刷</button>
-        </div>
+
         <nav class="share-block" aria-label="ぷりぽんっをシェア">
           <span>お友だちや先生にもシェア！</span>
           <div class="share-buttons">
@@ -123,9 +129,10 @@
   <footer class="footer"><div class="shell"><strong>ぷりぽんっ <span>-Print PON!-</span></strong><p>毎日の「できた！」を応援します。© <span id="year"></span> Print PON!</p>
     <nav class="footer-links" aria-label="サイト情報"><a href="/about/">運営者について</a><a href="/privacy/">プライバシーポリシー</a><a href="/terms/">利用規約</a></nav>
     <div class="share-buttons footer-share"><a data-share="line" target="_blank" rel="noopener noreferrer" href="#">LINEで送る</a><a data-share="x" target="_blank" rel="noopener noreferrer" href="#">Xでポスト</a><button data-share="copy" type="button">🔗 リンクをコピー</button></div></div></footer>
+  <noscript><p class="shell">プリントの自動作成・PDF保存にはJavaScriptを有効にしてください。単元ページでは問題例と学習内容を確認できます。</p></noscript>
   <div id="printArea" class="print-area" aria-hidden="true"></div>
-  <script src="generator.js" defer></script>
-  <script src="qr-data.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="/generator.js" defer></script>
+  <script src="/qr-data.js" defer></script>
+  <script src="/app.js" defer></script>
 </body>
 </html>

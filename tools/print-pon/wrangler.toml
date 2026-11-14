@@ -1,0 +1,7 @@
+name = "print-pon"
+pages_build_output_dir = "../../dist"
+compatibility_date = "2026-11-14"
+
+[[analytics_engine_datasets]]
+binding = "PRINT_PON_EVENTS"
+dataset = "print_pon_events"
