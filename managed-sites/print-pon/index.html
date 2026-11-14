@@ -37,7 +37,7 @@
   <main class="shell">
     <a class="skip-link" href="#worksheet">プリント作成へ進む</a>
     <!-- PAGE_INTRO_START -->
-    <section class="page-intro" aria-labelledby="hero-title"><h1 id="hero-title">計算プリントを作る</h1><p>計算と桁数を選んで、A4で保存・印刷。</p></section>
+    <section class="page-intro" aria-labelledby="hero-title"><h1 id="hero-title">計算プリントを作る</h1><p>設定を選んで、できあがりを確認。</p></section>
     <!-- PAGE_INTRO_END -->
     <section id="worksheet" class="workspace" aria-label="プリント作成">
       <div class="panel controls">
@@ -54,19 +54,20 @@
           <div class="control-group"><label for="questionCount">問題数</label><select id="questionCount"><option value="10">10問</option><option value="20" selected>20問</option><option value="30">30問</option><option value="50">50問</option></select></div>
           <label class="check-row"><input id="includeAnswers" type="checkbox" checked><span>答えをつける</span></label>
         </div>
-        <div class="download-actions"><button class="btn btn-download" type="button" id="pdfBtn">PDFを保存</button><button class="btn btn-print" type="button" id="printBtn">印刷</button></div>
-        <button id="generateBtn" class="btn btn-primary" type="button">↻ 別の問題にする</button>
-        <div class="notice" id="notice" role="status" aria-live="polite">設定すると問題が作成されます。</div>
-        <details class="preview-details"><summary>プリントの見本を見る</summary>
+        <button id="confirmBtn" class="btn btn-download" type="button" aria-controls="previewStage">プリントを確認</button>
+        <div class="notice" id="notice" role="status" aria-live="polite">できあがりを確認してから保存・印刷できます。</div>
+        <details class="preview-details" id="previewStage" hidden><summary>できあがり</summary>
           <div class="preview-tabs" role="tablist" aria-label="プレビューの種類"><button type="button" id="previewProblemTab" class="is-selected" role="tab" aria-selected="true">問題</button><button type="button" id="previewAnswerTab" role="tab" aria-selected="false">答え</button></div>
           <div class="preview-frame"><div class="preview-sheet" id="previewSheet" aria-label="計算プリントのプレビュー"></div></div>
           <div class="preview-hint" id="previewHint">20問の計算プリント</div>
+          <div class="download-actions"><button class="btn btn-download" type="button" id="pdfBtn" disabled>PDFを保存</button><button class="btn btn-print" type="button" id="printBtn" disabled>印刷</button></div>
+          <button id="generateBtn" class="btn btn-primary" type="button">↻ 別の問題にする</button>
         </details>
       </div>
     </section>
     <!-- TOPIC_DIRECTORY -->
     <!-- UNIT_INFORMATION -->
-    <details class="secondary-section"><summary>使い方・よくある質問</summary><div class="help-content"><p>設定を選ぶと問題が自動で作成されます。「PDFを保存」または「印刷」で出力できます。答えは別ページです。同じ条件で作り直すときは「別の問題にする」を押してください。</p><p>ひき算の答えは0以上です。わり算では、あまりの有無を選べます。同じプリント内の式は重複しません。条件によって問題数が足りない場合はお知らせします。</p><p>家庭・学校・塾での利用や配布も無料です。PDFは端末内で作成します。</p></div></details>
+    <details class="secondary-section"><summary>使い方・よくある質問</summary><div class="help-content"><p>設定を選び「プリントを確認」を押すと、できあがりが表示されます。問題や答えを確認してから、その下の「PDFを保存」または「印刷」で出力できます。答えは別ページです。同じ条件で作り直すときは「別の問題にする」を押してください。</p><p>ひき算の答えは0以上です。わり算では、あまりの有無を選べます。同じプリント内の式は重複しません。条件によって問題数が足りない場合はお知らせします。</p><p>家庭・学校・塾での利用や配布も無料です。PDFは端末内で作成します。</p></div></details>
   </main>
   <footer class="footer"><div class="shell"><nav class="footer-links" aria-label="サイト情報"><a href="/about/">運営者について</a><a href="/privacy/">プライバシーポリシー</a><a href="/terms/">利用規約</a></nav><details class="share-details"><summary>このサイトを共有</summary><div class="share-buttons"><a data-share="line" target="_blank" rel="noopener noreferrer" href="#">LINE</a><a data-share="x" target="_blank" rel="noopener noreferrer" href="#">X</a><button data-share="copy" type="button">リンクをコピー</button></div></details><p>© <span id="year"></span> Print PON!</p></div></footer>
   <noscript><p class="shell">プリント作成にはJavaScriptを有効にしてください。</p></noscript>
