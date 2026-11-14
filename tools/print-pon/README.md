@@ -33,7 +33,7 @@ npm run check、npm test（既存13テスト）成功。修正済み配信ファ
 
 ### 操作の匿名集計
 
-現在はアカウントのAnalytics Engine初回有効化が必要なため、events-enabled.jsonのenabledをfalseにしている。操作イベントの送信とWorker配信は停止し、既存Web Analyticsだけを継続。analytics.jsのフォールバックについても、自動注入のある／ない両方のケースで実行タグが1個になることをブラウザー検証する。有効化後にtrueへ変更すると、同じテストと自動公開で集計を有効にできる。有料プランへの変更は行っていない。以下は有効時の仕様。
+2026-11-14、所有者がAnalytics Engineを初回有効化。プレビューのbinding確認がHTTP 204で成功したため、events-enabled.jsonのenabledをtrueに変更。既存Web Analyticsを維持し、操作イベントのWorker配信を有効にする。analytics.jsのフォールバックは自動注入のある／ない両方で実行タグが1個になることをブラウザー検証する。有料プランへの変更は行っていない。集計の読取APIは現行トークンで403のため、受信確認と集計閲覧を区別して報告する。
 
 既存のCloudflare Web Analyticsにはカスタムイベントを無理に混ぜず、そのタグとページ閲覧計測を維持する。Workers Analytics Engineのprint_pon_eventsデータセットに、最小限のPages Workerからイベントだけを記録する。
 

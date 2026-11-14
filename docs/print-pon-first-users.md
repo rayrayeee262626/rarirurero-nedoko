@@ -8,14 +8,14 @@
 | 対象 | 確認結果 | まだ確認できないこと |
 | --- | --- | --- |
 | Cloudflare Web Analytics | 公開ページで実行タグ1個。実際の受信先 /cdn-cgi/rum がHTTP 204。ブラウザーのエラーなし | 管理画面のVisits/PVと集計反映。既存トークンの解析閲覧はHTTP 403 |
-| 匿名の操作集計 | コード・入力検証・DNT/GPC・無効時の送信停止を実装済み。別プレビューでも初回有効化が必要と返る | アカウントのAnalytics Engine有効化、実イベントの保存とSQL集計。現在は送信停止 |
+| 匿名の操作集計 | 所有者の初回有効化後、プレビューbindingがHTTP 204で接続成功。本番計測の有効化を進める | 実イベントの集計値。SQL読取APIは現行トークンで403 |
 | Search Console | 所有権確認タグあり。sitemap.xmlに14 URL、新しい10単元をすべて含む。各ページは静的本文・自己canonical・クロール許可あり | 所有権確認の完了、サイトマップの送信・読込状況、Googleの実際のインデックス登録状態 |
 
 Web Analyticsのテストで、ops_checkという確認用リンクから1回のページ閲覧を送信した。この確認閲覧が数字に混ざる可能性がある。HTTP 204は受信先がリクエストを受け付けた証拠であり、ダッシュボードへの反映や利用者の存在を証明するものではない。Visitsを実人数と断定しない。
 
 ### 所有者による最小限の手続き
 
-1. Cloudflareの https://dash.cloudflare.com/f76e5aa4c68f52aa641c4e00da7be273/workers/analytics-engine で初回有効化する。契約・支払いの確認が出た場合は進めず確認する。完了後はアシスタントが既存の自動公開で機能スイッチを切り替え、匿名イベントの受信・集計を検証する。
+1. Cloudflare Analytics Engineの初回有効化は2026-11-14に所有者が実施済み。プレビューbindingのHTTP 204を確認し、以後の接続・本番公開はアシスタントが行う。初回手続きを繰り返す必要はない。
 2. Search Consoleの https://search.google.com/search-console/sitemaps?resource_id=https%3A%2F%2Fprint-pon.pages.dev%2F で既存プロパティを選び、https://print-pon.pages.dev/sitemap.xml を送信する。すでに成功なら再送不要。プロパティがなければURLプレフィックスで同URLを追加し、既設HTMLタグで所有権確認する。既存タグを削除・差し替えない。
 
 Google側では「ページのインデックス登録」を送信済みサイトマップで絞り込み、登録・未登録理由を確認する。個別確認の優先ページは九九と小1足し算。「URL検査」で公開URLテストとGoogleが選んだcanonicalを確認し、未登録なら登録をリクエストする。サイトマップ送信とインデックス登録は別の状態。通常の教材サイトにGoogle Indexing APIを使ったり、廃止されたサイトマップpingを送って登録済み扱いにしたりしない。
@@ -125,7 +125,9 @@ https://print-pon.pages.dev/grade-3/division-remainder/
 ## 今回の確認記録
 
 - 接続・プレビュー確認： https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43555439290
-- 受信テスト：Web Analyticsの実受信先HTTP 204、実行タグ1個。匿名イベントはdisabled。
+- 受信テスト：Web Analyticsの実受信先HTTP 204、実行タグ1個。匿名イベントのプレビューbindingは有効化後にHTTP 204を確認。
 - 登録確認用URL一覧：docs/print-pon-index-check.csv。Googleの登録状態は未確認と明記。
 - 運用補助：手動実行の「Inspect Print PON measurement access」で、既存認証の到達範囲とプレビューでのイベントbindingを再確認できる。本番デプロイは変更しない。
 - Analytics EngineのSQLレポートは公式仕様に合わせてFORMAT JSONとContent-Type: text/plainを明示。将来の複数行の集計結果を読み取れるようにした。
+
+有効化後の接続確認： https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43557128472 。所有者によるデータセットの手動作成や秘密情報の共有は不要。
