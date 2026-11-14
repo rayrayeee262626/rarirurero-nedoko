@@ -24,7 +24,16 @@ jobs:
           npm run check
           npm test
       - name: Build only Print PON assets
-        run: python3 tools/print-pon/build.py
+        run: |
+          python3 tools/print-pon/build.py
+          node tools/print-pon/test.mjs
+          python3 tools/print-pon/check-pages.py
+      - name: Browser regression checks without external traffic
+        env:
+          PRINT_PON_TEST_OUTPUT: ${{ runner.temp }}/print-pon-browser-results
+        run: |
+          npm install --prefix "$RUNNER_TEMP/print-pon-browser" --no-save --ignore-scripts playwright@1.62.1
+          CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" NODE_PATH="$RUNNER_TEMP/print-pon-browser/node_modules" node tools/print-pon/browser-check.cjs
       - name: Install pinned Wrangler without credentials
         run: npx --yes --package=wrangler@4.162.0 wrangler --version
       - name: Deploy Print PON and verify production
