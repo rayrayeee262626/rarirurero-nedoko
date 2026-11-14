@@ -1,0 +1,20 @@
+{
+  "deployment_id": "02e6e2e2-d023-498c-964d-1d7aee2866e6",
+  "files": {
+    "about/index.html": "2f2b3cc1cbd6fefe4ba159e43ea5518667810b169acb8863052ffb79a21b75ee",
+    "app.js": "672787ccfded4cad192672d5717ab5cdbe87817daf50716acf0eb9983c3e06e2",
+    "apple-touch-icon.png": "eeeb5c06e76a29036492012b4249edef297549d6428c69edde9669159cf8afeb",
+    "favicon.svg": "4f4fcd8f8b73a4d1051de5fff4c05f34ba94ee7505a554731c4c023e9beca56a",
+    "generator.js": "94ec8d92866d14dd7ecc9f22d6a26f84f1391363e0ac7b4ba5977d7fcbb16e32",
+    "index.html": "80018ffde0bf7850d17249f446e2730ea460debdfba21a53cc5a7f0323fb3d18",
+    "ogp.png": "df0dc1d7c428cb2bdc14c10de09bb335259c49bb76414577f1ee7c15942409c3",
+    "privacy/index.html": "78e4cd023063079f4751fec3d8ae7b0bc4bcfe0434de8ea7904907684cd13400",
+    "qr-data.js": "d85d4fc52f0b0fe8fa941bbd82d6d64b40260389384840c7bda0f20616d63372",
+    "qr.svg": "bc9042ecd68cc32de74a56018a270c7a22012a8af0e73fe32199a699e9c84fae",
+    "robots.txt": "a273ab97280b46abd9d70ea47cb3bf1c31ed97f41aa9aaaecbd46d941cbec0de",
+    "sitemap.xml": "f4ec8ad9f4d56c9fb786eb78e442ce40bcad7c81f06842f03a8028e36f95d011",
+    "style.css": "9d80057d08adea0cc6ba45af470a7bc11f2f27aa2cd2080731f31ba04eeb1e87",
+    "terms/index.html": "736444a4fa3bcce5cbf3598631da89243377989bb71816ea797ecdd035792922"
+  },
+  "note": "Recovered complete static deployment; automatically injected analytics removed from HTML. Original development ZIP unavailable."
+}

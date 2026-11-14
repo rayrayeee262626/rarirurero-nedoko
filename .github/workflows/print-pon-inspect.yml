@@ -1,0 +1,52 @@
+name: Inspect Print PON connection (read only)
+on:
+  push:
+    branches: [codex/print-pon-connection]
+    paths: [.github/workflows/print-pon-inspect.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read only Print PON project metadata
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f76e5aa4c68f52aa641c4e00da7be273
+        shell: python
+        run: |
+          import os,json,urllib.request,urllib.error
+          token=os.environ.get('CLOUDFLARE_API_TOKEN','')
+          if not token:
+              raise SystemExit('Existing repository Cloudflare secret is unavailable')
+          base='https://api.cloudflare.com/client/v4/accounts/'+os.environ['CLOUDFLARE_ACCOUNT_ID']+'/pages/projects/print-pon'
+          def get(url):
+              req=urllib.request.Request(url,headers={'Authorization':'Bearer '+token})
+              try:
+                  with urllib.request.urlopen(req,timeout=30) as response:
+                      data=json.load(response)
+              except urllib.error.HTTPError as e:
+                  raise SystemExit('Cloudflare request failed: HTTP '+str(e.code))
+              if not data.get('success'):
+                  raise SystemExit('Cloudflare request unsuccessful; response body withheld')
+              return data['result']
+          p=get(base)
+          source=p.get('source') or {}
+          config=source.get('config') or {}
+          latest=p.get('canonical_deployment') or {}
+          trigger=latest.get('deployment_trigger') or {}
+          meta=trigger.get('metadata') or {}
+          print(json.dumps({
+              'project':p.get('name'),
+              'production_branch':p.get('production_branch'),
+              'source_type':source.get('type'),
+              'source_owner':config.get('owner'),
+              'source_repo':config.get('repo_name'),
+              'build_config':{k:(p.get('build_config') or {}).get(k) for k in ['build_command','destination_dir','root_dir']},
+              'deployment_id':latest.get('id'),
+              'deployment_status':(latest.get('latest_stage') or {}).get('status'),
+              'commit_hash':meta.get('commit_hash'),
+              'branch':meta.get('branch'),
+              'has_worker':latest.get('is_skipped'),
+          },ensure_ascii=False))
