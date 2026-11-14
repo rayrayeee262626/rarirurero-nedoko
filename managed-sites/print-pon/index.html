@@ -22,117 +22,54 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <!-- Google Search Console ownership verification -->
   <meta name="google-site-verification" content="-G95YYi3bJtYqHsr3ZClnSAXNbHrFtJ5lOfBLj1zM80">
-  <!-- Cloudflare Web Analytics is already enabled in the Pages dashboard and should be auto-injected on deploy.
-       MANUAL FALLBACK ONLY if automatic injection is disabled (never use both):
-       <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
-               data-cf-beacon='{ "token": "CLOUDFLARE_WEB_ANALYTICS_TOKEN_HERE" }'></script>
-       The placeholder is intentionally NOT active. -->
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="simple-ui">
   <header class="site-header">
     <div class="shell header-inner">
       <a href="/" class="brand" aria-label="ぷりぽんっ ホーム">
         <span class="brand-paper" aria-hidden="true"><svg viewBox="0 0 62 68" width="54" height="58"><path d="M13 5h29l12 12v43a4 4 0 0 1-4 4H13a5 5 0 0 1-5-5V10a5 5 0 0 1 5-5Z" fill="#fff" stroke="#302f35" stroke-width="3"/><path d="M42 5v13h12" fill="none" stroke="#302f35" stroke-width="3" stroke-linejoin="round"/><path d="M19 32h24M19 43h15" stroke="#79b6e7" stroke-width="4" stroke-linecap="round"/><path d="m31 18 4-8 4 8 8 4-8 4-4 8-4-8-8-4Z" fill="#ffd35a" stroke="#302f35" stroke-width="2"/></svg></span>
         <span class="brand-type"><span class="brand-jp"><span>ぷ</span><span>り</span><span>ぽ</span><span>ん</span><span>っ</span></span><span class="brand-en">- Print PON! -</span></span>
       </a>
-      <span class="top-tag"><span class="dot"></span> ずっと無料・登録なし</span>
+      <span class="top-tag"><span class="dot"></span> 無料・登録不要</span>
     </div>
   </header>
-
   <main class="shell">
     <a class="skip-link" href="#worksheet">プリント作成へ進む</a>
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">おうちでも、学校でも、塾でも。</p>
-        <h1 id="hero-title">計算プリントが、<br><span class="hero-highlight">ぽんっ！</span>とできる。</h1>
-        <p class="hero-description">小学生向けの<strong>無料計算プリント</strong>を、登録なしで作成。<br>たし算・ひき算・かけ算・わり算を、学年や1〜3桁の設定で練習できます。<br>10・20・30・50問から選んで、答えつきの<strong>A4 PDFを保存・印刷</strong>できます。</p>
-        <div class="hero-pills"><span>✓ 何度でも無料</span><span>✓ PDF保存</span><span>✓ 答えもつくれる</span></div>
-        <nav class="hero-links" aria-label="プリントの選び方"><a href="#topics">学年・単元から選ぶ</a><a href="#worksheet">自由に設定して作る</a></nav>
-      </div>
-      <div class="hero-art" aria-hidden="true"><div class="paper paper-back"></div><div class="paper paper-front"><div class="paper-title">けいさん プリント <span>★</span></div><div class="paper-item">① 24 × 3 = <i></i></div><div class="paper-item">② 15 + 8 = <i></i></div><div class="paper-item">③ 36 ÷ 4 = <i></i></div><div class="paper-item">④ 42 − 7 = <i></i></div><div class="paper-badge">ぽんっ！</div></div><span class="star star-one">✳</span><span class="star star-two">✦</span><span class="star star-three">✳</span></div>
-    </section>
-
-    <!-- TOPIC_DIRECTORY -->
+    <!-- PAGE_INTRO_START -->
+    <section class="page-intro" aria-labelledby="hero-title"><h1 id="hero-title">計算プリントを作る</h1><p>計算と桁数を選んで、A4で保存・印刷。</p></section>
+    <!-- PAGE_INTRO_END -->
     <section id="worksheet" class="workspace" aria-label="プリント作成">
       <div class="panel controls">
-        <div class="panel-title"><span class="number-bubble">1</span><div><h2>もんだいをえらぼう</h2><p>好きな計算と数字をえらんでね</p></div></div>
-        <section class="grade-picker" aria-labelledby="grade-title">
-          <h3 id="grade-title">学年でえらぶ <span class="subtle">（目安）</span></h3>
-          <div class="grade-buttons" id="gradePresets">
-            <button type="button" data-grade="pre" aria-pressed="false">年長</button>
-            <button type="button" data-grade="1" aria-pressed="false">小1</button>
-            <button type="button" data-grade="2" aria-pressed="false">小2</button>
-            <button type="button" data-grade="3" aria-pressed="false">小3</button>
-            <button type="button" data-grade="4" aria-pressed="false">小4</button>
-            <button type="button" data-grade="5" aria-pressed="false">小5・6</button>
-          </div>
-          <p class="grade-guide">年長：1桁＋1桁・10問 ／ 小1：1桁＋1桁・20問 ／ 小2：2桁−1桁・20問 ／ 小3：2桁×1桁・20問 ／ 小4：3桁÷1桁（あまりあり・なし）・20問 ／ 小5・6：四則混合（わり算はあまり混在）・30問。学習進度に合わせて変更できます。</p>
-        </section>
-        <details class="advanced-controls" open><summary>くわしく設定 <span>（計算の種類・桁数・問題数）</span></summary>
-        <fieldset class="control-group"><legend>計算のしゅるい</legend><div class="choice-grid ops" id="opGroup">
-          <label class="choice"><input type="radio" name="operation" value="mix" checked><span>ぜんぶ混ぜる</span></label>
-          <label class="choice"><input type="radio" name="operation" value="add"><span>＋ たし算</span></label>
-          <label class="choice"><input type="radio" name="operation" value="sub"><span>− ひき算</span></label>
-          <label class="choice"><input type="radio" name="operation" value="mul"><span>× かけ算</span></label>
-          <label class="choice"><input type="radio" name="operation" value="div"><span>÷ わり算</span></label>
+        <!-- OPERATION_SETTINGS_START -->
+        <fieldset class="control-group"><legend>計算の種類</legend><div class="choice-grid ops" id="opGroup"><label class="choice"><input type="radio" name="operation" value="add"><span><b aria-hidden="true">＋</b><small>たし算</small></span></label><label class="choice"><input type="radio" name="operation" value="sub"><span><b aria-hidden="true">−</b><small>ひき算</small></span></label><label class="choice"><input type="radio" name="operation" value="mul"><span><b aria-hidden="true">×</b><small>かけ算</small></span></label><label class="choice"><input type="radio" name="operation" value="div"><span><b aria-hidden="true">÷</b><small>わり算</small></span></label><label class="choice"><input type="radio" name="operation" value="mix" checked><span><b aria-hidden="true">＋−×÷</b><small>混ぜる</small></span></label></div></fieldset>
+        <fieldset class="control-group remainder-group" id="remainderGroup" hidden><legend>わり算のあまり</legend><div class="choice-grid remainder-choices">
+          <label class="choice"><input type="radio" name="remainderMode" value="none" checked><span>なし</span></label>
+          <label class="choice"><input type="radio" name="remainderMode" value="only"><span>あり</span></label>
+          <label class="choice"><input type="radio" name="remainderMode" value="mixed"><span>両方</span></label>
         </div></fieldset>
-        <fieldset class="control-group remainder-group" id="remainderGroup" hidden>
-          <legend>あまりの設定</legend>
-          <div class="choice-grid remainder-choices" role="group" aria-label="わり算のあまり">
-            <label class="choice"><input type="radio" name="remainderMode" value="none" checked><span>あまりなし</span></label>
-            <label class="choice"><input type="radio" name="remainderMode" value="only"><span>あまりあり</span></label>
-            <label class="choice"><input type="radio" name="remainderMode" value="mixed"><span>両方まぜる</span></label>
-          </div>
-          <p class="remainder-explainer">「あまりあり」は、すべての問題であまりが出ます。</p>
-        </fieldset>
-        <div class="digit-group">
-          <div class="control-group"><label for="leftDigits">左の数のけた数</label><select id="leftDigits"><option value="1">1けた</option><option value="2" selected>2けた</option><option value="3">3けた</option></select></div>
-          <div class="control-group"><label for="rightDigits">右の数のけた数</label><select id="rightDigits"><option value="1" selected>1けた</option><option value="2">2けた</option><option value="3">3けた</option></select></div>
+        <div class="digit-group"><div class="control-group"><label for="leftDigits">左の数の桁数</label><select id="leftDigits"><option value="1">1けた</option><option value="2" selected>2けた</option><option value="3">3けた</option></select></div><div class="control-group"><label for="rightDigits">右の数の桁数</label><select id="rightDigits"><option value="1" selected>1けた</option><option value="2">2けた</option><option value="3">3けた</option></select></div></div>
+        <!-- OPERATION_SETTINGS_END -->
+        <div class="compact-options">
+          <div class="control-group"><label for="questionCount">問題数</label><select id="questionCount"><option value="10">10問</option><option value="20" selected>20問</option><option value="30">30問</option><option value="50">50問</option></select></div>
+          <label class="check-row"><input id="includeAnswers" type="checkbox" checked><span>答えをつける</span></label>
         </div>
-        <div class="control-group"><label for="questionCount">1まいの問題数</label><select id="questionCount"><option value="10">10問（ゆったり）</option><option value="20" selected>20問（ふつう）</option><option value="30">30問（たっぷり）</option><option value="50">50問（チャレンジ）</option></select></div>
+        <div class="download-actions"><button class="btn btn-download" type="button" id="pdfBtn">PDFを保存</button><button class="btn btn-print" type="button" id="printBtn">印刷</button></div>
+        <button id="generateBtn" class="btn btn-primary" type="button">↻ 別の問題にする</button>
+        <div class="notice" id="notice" role="status" aria-live="polite">設定すると問題が作成されます。</div>
+        <details class="preview-details"><summary>プリントの見本を見る</summary>
+          <div class="preview-tabs" role="tablist" aria-label="プレビューの種類"><button type="button" id="previewProblemTab" class="is-selected" role="tab" aria-selected="true">問題</button><button type="button" id="previewAnswerTab" role="tab" aria-selected="false">答え</button></div>
+          <div class="preview-frame"><div class="preview-sheet" id="previewSheet" aria-label="計算プリントのプレビュー"></div></div>
+          <div class="preview-hint" id="previewHint">20問の計算プリント</div>
         </details>
-        <label class="check-row"><input id="includeAnswers" type="checkbox" checked><span>答えのページもつける</span></label>
-        <div class="notice" id="notice" role="status" aria-live="polite">設定を変えるとプレビューもすぐ更新されるよ。</div>
-        <a class="preview-jump" href="#pdfBtn">できあがり・保存・印刷へ ↓</a>
-        <button id="generateBtn" class="btn btn-primary" type="button"><span aria-hidden="true">↻</span> 同じ条件でもう1枚つくる</button>
-      </div>
-      <div class="panel preview-panel">
-        <div class="panel-title"><span class="number-bubble blue">2</span><div><h2>できあがりをチェック</h2><p>プリントの見本だよ</p></div></div>
-        <div class="download-actions">
-          <button class="btn btn-download" type="button" id="pdfBtn"><span aria-hidden="true">↓</span> PDFを保存</button>
-          <button class="btn btn-print" type="button" id="printBtn"><span aria-hidden="true">▣</span> そのまま印刷</button>
-        </div>
-        <p class="quick-guide">見本は作成済みです。そのまま保存・印刷できます。答えは別ページにつきます。</p>
-        <div class="preview-tabs" role="tablist" aria-label="プレビューの種類">
-          <button type="button" id="previewProblemTab" class="is-selected" role="tab" aria-selected="true">問題</button>
-          <button type="button" id="previewAnswerTab" role="tab" aria-selected="false">答え</button>
-        </div>
-        <div class="preview-frame"><div class="preview-sheet" id="previewSheet" aria-label="計算プリントのプレビュー"></div></div>
-        <div class="preview-hint" id="previewHint">20問の計算プリントができたよ！</div>
-
-        <nav class="share-block" aria-label="ぷりぽんっをシェア">
-          <span>お友だちや先生にもシェア！</span>
-          <div class="share-buttons">
-            <a data-share="line" target="_blank" rel="noopener noreferrer" href="#">LINEで送る</a>
-            <a data-share="x" target="_blank" rel="noopener noreferrer" href="#">Xでポスト</a>
-            <button data-share="copy" type="button">🔗 リンクをコピー</button>
-          </div>
-        </nav>
-        <p class="small-note">A4サイズで作成します。PDFはこの端末の中で作るので、入力した内容は送信されません。</p>
       </div>
     </section>
-    <section class="about" aria-labelledby="about-title"><h2 id="about-title">小学生の家庭学習に使える無料計算プリント</h2><div class="feature-grid"><div><span>✏️</span><h3>四則計算ぜんぶ</h3><p>たし算・ひき算・かけ算・わり算を練習できます。</p></div><div><span>🖨️</span><h3>印刷しやすいA4</h3><p>問題と答えをすっきりレイアウト。何枚でも作れます。</p></div><div><span>🎈</span><h3>ずっと無料</h3><p>会員登録もログインもいりません。</p></div></div></section>
-    <p class="usage-permission">家庭学習での利用は無料です。学校・学習塾・学童保育などの授業・配布での利用も、無料で許可なくご利用いただけます。</p>
-    <section class="faq" aria-labelledby="faq-title"><h2 id="faq-title">よくある質問</h2><details><summary>PDFを印刷するには？</summary><p>「PDFを保存」でファイルを保存して開き、印刷できます。「そのまま印刷」なら印刷画面に直接進みます。印刷画面から「PDFに保存」を選ぶこともできます。</p></details><details><summary>同じ問題が出ることはありますか？</summary><p>同じプリント内で同じ式は出さないようにしています。組み合わせが足りない設定では、画面でお知らせします。</p></details><details><summary>わり算の余りはありますか？</summary><p>はい。わり算を選ぶと「あまりなし」「あまりあり」「両方まぜる」を選べます。初期設定は「あまりなし」です。「あまりあり」では必ず余りが出て、答えは「商 あまり 余り」と表示します。余りは必ずわる数より小さくなります。小4の学年設定と小5・6の四則混合では、どちらのわり算も出題します。なお、ひき算でマイナスの答えは出ません。</p></details></section>
+    <!-- TOPIC_DIRECTORY -->
+    <!-- UNIT_INFORMATION -->
+    <details class="secondary-section"><summary>使い方・よくある質問</summary><div class="help-content"><p>設定を選ぶと問題が自動で作成されます。「PDFを保存」または「印刷」で出力できます。答えは別ページです。同じ条件で作り直すときは「別の問題にする」を押してください。</p><p>ひき算の答えは0以上です。わり算では、あまりの有無を選べます。同じプリント内の式は重複しません。条件によって問題数が足りない場合はお知らせします。</p><p>家庭・学校・塾での利用や配布も無料です。PDFは端末内で作成します。</p></div></details>
   </main>
-  <footer class="footer"><div class="shell"><strong>ぷりぽんっ <span>-Print PON!-</span></strong><p>毎日の「できた！」を応援します。© <span id="year"></span> Print PON!</p>
-    <nav class="footer-links" aria-label="サイト情報"><a href="/about/">運営者について</a><a href="/privacy/">プライバシーポリシー</a><a href="/terms/">利用規約</a></nav>
-    <div class="share-buttons footer-share"><a data-share="line" target="_blank" rel="noopener noreferrer" href="#">LINEで送る</a><a data-share="x" target="_blank" rel="noopener noreferrer" href="#">Xでポスト</a><button data-share="copy" type="button">🔗 リンクをコピー</button></div></div></footer>
-  <noscript><p class="shell">プリントの自動作成・PDF保存にはJavaScriptを有効にしてください。単元ページでは問題例と学習内容を確認できます。</p></noscript>
+  <footer class="footer"><div class="shell"><nav class="footer-links" aria-label="サイト情報"><a href="/about/">運営者について</a><a href="/privacy/">プライバシーポリシー</a><a href="/terms/">利用規約</a></nav><details class="share-details"><summary>このサイトを共有</summary><div class="share-buttons"><a data-share="line" target="_blank" rel="noopener noreferrer" href="#">LINE</a><a data-share="x" target="_blank" rel="noopener noreferrer" href="#">X</a><button data-share="copy" type="button">リンクをコピー</button></div></details><p>© <span id="year"></span> Print PON!</p></div></footer>
+  <noscript><p class="shell">プリント作成にはJavaScriptを有効にしてください。</p></noscript>
   <div id="printArea" class="print-area" aria-hidden="true"></div>
-  <script src="/generator.js" defer></script>
-  <script src="/qr-data.js" defer></script>
-  <script src="/app.js" defer></script>
-</body>
-</html>
+  <script src="/generator.js" defer></script><script src="/qr-data.js" defer></script><script src="/app.js" defer></script>
+</body></html>

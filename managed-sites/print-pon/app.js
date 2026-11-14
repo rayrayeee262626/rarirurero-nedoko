@@ -23,7 +23,7 @@ const grades={
 function selectedOperation(){return document.querySelector('input[name="operation"]:checked').value;}
 function updateRemainderVisibility(){el.remainderGroup.hidden=selectedOperation()!=='div';}
 function settings(){const op=selectedOperation();return {op,left:+el.left.value,right:+el.right.value,count:+el.count.value,answers:el.answers.checked,remainderMode:op==='mix'?'mixed':document.querySelector('input[name="remainderMode"]:checked').value,...(topic?.settings.maxQuotient?{maxQuotient:topic.settings.maxQuotient}:{})};}
-function clearPreset(){el.preset.querySelectorAll('[data-grade]').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false');});}
+function clearPreset(){el.preset?.querySelectorAll('[data-grade]').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-pressed','false');});}
 function status(message,type=''){el.notice.textContent=message;el.notice.className='notice'+(type?' '+type:'');}
 function groups(){const mid=Math.ceil(questions.length/2);return [questions.slice(0,mid),questions.slice(mid)];}
 function qText(q,isAnswer){
@@ -63,7 +63,7 @@ function renderPrintPage(withAnswers){const page=document.createElement('section
   });grid.appendChild(wrap);});page.appendChild(grid);page.appendChild(footerDOM('print-foot'));return page;
 }
 function renderPrintable(){el.print.replaceChildren();if(!questions.length)return;el.print.appendChild(renderPrintPage(false));if(el.answers.checked)el.print.appendChild(renderPrintPage(true));}
-function generate(action=false){try{questions=makeProblems(settings());renderPreview();renderPrintable();el.pdf.disabled=false;el.printBtn.disabled=false;status('見本の問題で、すぐPDF保存・印刷できます。','success');if(action)track('generate');return true;}
+function generate(action=false){try{questions=makeProblems(settings());renderPreview();renderPrintable();el.pdf.disabled=false;el.printBtn.disabled=false;status('このまま保存・印刷できます。','success');if(action)track('generate');return true;}
   catch(error){questions=[];el.print.replaceChildren();el.preview.replaceChildren();el.pdf.disabled=true;el.printBtn.disabled=true;el.hint.textContent='この条件では作れません。設定を見直してね。';status(error.message,'error');return false;}
 }
 function drawQr(ctx,x,y,side){const matrix=globalThis.PRINT_PON_QR;const size=matrix.length,pad=4,unit=side/(size+pad*2);
@@ -113,9 +113,9 @@ for(const btn of document.querySelectorAll('[data-share="copy"]'))btn.addEventLi
   catch(error){status('コピーできませんでした。URLを長押ししてコピーしてください：'+URL_SITE,'error');}
 });
 for(const control of document.querySelectorAll('input[name="operation"], input[name="remainderMode"], #leftDigits, #rightDigits, #questionCount'))control.addEventListener('change',()=>{updateRemainderVisibility();clearPreset();generate(true);});
-for(const btn of el.preset.querySelectorAll('[data-grade]'))btn.addEventListener('click',()=>{
+for(const btn of el.preset?.querySelectorAll('[data-grade]')||[])btn.addEventListener('click',()=>{
   const p=grades[btn.dataset.grade];document.querySelector('input[name="operation"][value="'+p.op+'"]').checked=true;el.left.value=p.left;el.right.value=p.right;el.count.value=p.count;document.querySelector('input[name="remainderMode"][value="'+p.remainderMode+'"]').checked=true;updateRemainderVisibility();
-  clearPreset();btn.classList.add('active');btn.setAttribute('aria-pressed','true');generate(true);
+  clearPreset();btn.classList.add('active');btn.setAttribute('aria-pressed','true');generate(true);document.querySelector('#worksheet').scrollIntoView({block:'start',behavior:'instant'});
 });
 el.tabProblem.addEventListener('click',()=>{previewMode='problem';renderPreview();});
 el.tabAnswer.addEventListener('click',()=>{if(!el.answers.checked)return;previewMode='answer';renderPreview();});
