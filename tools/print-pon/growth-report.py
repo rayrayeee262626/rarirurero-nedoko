@@ -19,9 +19,11 @@ if status==200:
  print('RUM matching site tags:',[s.get('site_tag') for s in matches])
 query="SELECT toDate(timestamp) AS day, blob1 AS event, blob2 AS page, SUM(_sample_interval * double1) AS actions FROM print_pon_events WHERE timestamp >= NOW() - INTERVAL '28' DAY GROUP BY day,event,page ORDER BY day DESC,actions DESC LIMIT 500 FORMAT JSON"
 s,d=request(base+'/analytics_engine/sql',query,True);print('Action aggregate HTTP:',s);print('ACTION_DATA',json.dumps(d.get('data',[]) if s==200 else d))
-q='query { __type(name: "Account") { fields { name args { name type { name kind ofType { name kind } } } type { name kind ofType { name kind } } } } }'
+q='query { __schema { types { name kind } queryType { name fields { name type { name kind ofType { name kind } } } } } }'
 s,d=request('https://api.cloudflare.com/client/v4/graphql',{'query':q});print('GraphQL schema HTTP:',s)
 if d.get('errors'):print('GRAPHQL_ERRORS',json.dumps(d['errors']))
 else:
- fields=((d.get('data') or {}).get('__type') or {}).get('fields',[])
- print('RUM_SCHEMA',json.dumps([f for f in fields if 'rum' in f['name'].lower()]))
+ schema=(d.get('data') or {}).get('__schema') or {}
+ print('RUM_TYPES',json.dumps([t for t in schema.get('types',[]) if 'rumpageload' in t['name'].lower()]))
+ print('ROOT_SCHEMA',json.dumps(schema.get('queryType')))
+ print('ACCOUNT_TYPES',json.dumps([t for t in schema.get('types',[]) if t['name'].lower() in ['account','viewer']]))
