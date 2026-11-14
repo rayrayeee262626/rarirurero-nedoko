@@ -54,9 +54,9 @@ try:
    html=public('https://print-pon.pages.dev/?release='+sha).decode()
    assert '小学生の計算プリントを無料作成・PDF印刷' in html,'Title not updated'
    scripts=Scripts();scripts.feed(html)
-   assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')==1,'Analytics injection must occur exactly once'
+   assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')<=1 and scripts.sources.count('/analytics.js')==1,'Existing analytics fallback missing or duplicate injection'
    assert 'google-site-verification' in html,'Ownership verification missing'
-   for file in ['robots.txt','sitemap.xml','app.js','generator.js','ogp.png','privacy/']:
+   for file in ['robots.txt','sitemap.xml','app.js','generator.js','ogp.png','privacy/','analytics.js']:
     assert len(public('https://print-pon.pages.dev/'+file))>0
    public('https://print-pon.pages.dev/no-such-page-release-check',404)
    topics=json.loads((ROOT/'tools/print-pon/topics.json').read_text())
@@ -64,7 +64,7 @@ try:
     page=public('https://print-pon.pages.dev/'+topic['slug']+'/').decode()
     assert topic['title'] in page and 'topicConfig' in page
     scripts=Scripts();scripts.feed(page)
-    assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')==1
+    assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')<=1 and scripts.sources.count('/analytics.js')==1
    if EVENTS:
     health=subprocess.run(['curl','--silent','--show-error','--max-time','30','--output','/dev/null','--write-out','%{http_code}','--request','POST','--header','Origin: https://print-pon.pages.dev','--header','Content-Type: application/json','--data','{"event":"health","page":"home"}','https://print-pon.pages.dev/api/events'],capture_output=True,check=True)
     assert health.stdout==b'204','Anonymous event binding unavailable'

@@ -53,7 +53,7 @@ def render_topic(home,t):
  return s
 
 def build():
- expected=set(json.loads((ROOT/'tools/print-pon/recovered-release.json').read_text())['files'])|{'404.html'}
+ expected=set(json.loads((ROOT/'tools/print-pon/recovered-release.json').read_text())['files'])|{'404.html','analytics.js'}
  actual={str(p.relative_to(SOURCE)) for p in SOURCE.rglob('*') if p.is_file() and p.name!='AGENTS.md'}
  assert actual==expected, 'Unexpected or missing source files'
  out=ROOT/'dist'
@@ -72,5 +72,7 @@ def build():
  privacy=out/'privacy/index.html'
  state='現在、操作回数の匿名集計は有効です。' if EVENTS else '現在、操作回数の匿名集計は無効で、操作イベントは送信していません。ページ閲覧のWeb Analyticsは継続しています。'
  privacy.write_text(privacy.read_text().replace('<!-- EVENT_STATUS -->','<p>'+state+'</p>'))
+ for html in out.rglob('*.html'):
+  html.write_text(html.read_text().replace('</body>','<script defer src="/analytics.js"></script></body>'))
  print(f'Print PON: {len(TOPICS)} static topic pages, sitemap, action events {'enabled' if EVENTS else 'disabled'} in dist/')
 if __name__=='__main__':build()
