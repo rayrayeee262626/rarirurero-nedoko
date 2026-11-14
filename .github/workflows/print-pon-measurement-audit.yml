@@ -1,0 +1,23 @@
+name: Inspect Print PON measurement access
+on:
+  push:
+    branches: [codex/print-pon-measurement-audit]
+    paths:
+      - tools/print-pon/measurement-audit.py
+      - .github/workflows/print-pon-measurement-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Inspect Pages, Web Analytics and Analytics Engine with existing credential
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: f76e5aa4c68f52aa641c4e00da7be273
+        run: python3 tools/print-pon/measurement-audit.py
