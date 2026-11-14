@@ -1,4 +1,4 @@
 {
-  "enabled": false,
-  "reason": "Cloudflare account requires initial Analytics Engine activation; no action events are sent until it is enabled."
+  "enabled": true,
+  "reason": "Owner activated Analytics Engine; preview binding verified with HTTP 204 on 2026-11-14."
 }
