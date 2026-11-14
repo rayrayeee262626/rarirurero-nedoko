@@ -27,3 +27,16 @@ else:
  print('RUM_TYPES',json.dumps([t for t in schema.get('types',[]) if 'rumpageload' in t['name'].lower()]))
  print('ROOT_SCHEMA',json.dumps(schema.get('queryType')))
  print('ACCOUNT_TYPES',json.dumps([t for t in schema.get('types',[]) if t['name'].lower() in ['account','viewer']]))
+q='''query {
+ account: __type(name:"account") {fields{name args{name type{name kind ofType{name kind}}}}}
+ filter: __type(name:"AccountRumPageloadEventsAdaptiveGroupsFilter_InputObject") {inputFields{name type{name kind ofType{name kind}}}}
+ dimensions: __type(name:"AccountRumPageloadEventsAdaptiveGroupsDimensions") {fields{name}}
+ sums: __type(name:"AccountRumPageloadEventsAdaptiveGroupsSum") {fields{name}}
+ groups: __type(name:"AccountRumPageloadEventsAdaptiveGroups") {fields{name}}
+}'''
+s,d=request('https://api.cloudflare.com/client/v4/graphql',{'query':q})
+if d.get('errors'):print('RUM_FIELD_ERRORS',json.dumps(d['errors']))
+else:
+ info=d.get('data') or {}
+ print('RUM_ACCOUNT_FIELD',json.dumps([f for f in (info.get('account') or {}).get('fields',[]) if f['name']=='rumPageloadEventsAdaptiveGroups']))
+ for key in ['filter','dimensions','sums','groups']:print('RUM_FIELD_'+key,json.dumps(info.get(key)))
