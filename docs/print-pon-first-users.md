@@ -131,3 +131,14 @@ https://print-pon.pages.dev/grade-3/division-remainder/
 - Analytics EngineのSQLレポートは公式仕様に合わせてFORMAT JSONとContent-Type: text/plainを明示。将来の複数行の集計結果を読み取れるようにした。
 
 有効化後の接続確認： https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43557128472 。所有者によるデータセットの手動作成や秘密情報の共有は不要。
+
+## 匿名イベントの本番有効化完了
+
+2026-11-14、所有者によるAnalytics EngineのEnable後、データセットprint_pon_eventsの接続と本番有効化が完了。
+
+- 公開成功： https://github.com/rayrayeee262626/rarirurero-nedoko/actions/runs/43557293667
+- 本番の九九ページで、再生成・PDF保存開始・印刷画面を開く操作を各1回実行し、/api/eventsが3件ともHTTP 204を返した。
+- 各イベントはeventとpageの2項目だけ。Cookie・参照元なし。ブラウザーエラーなし、既存Web Analyticsの実行タグ1個を維持。
+- この3件は動作確認用の操作であり、一般利用者の利用数ではない。最初の集計にはgenerate/pdf/print各1件がテスト分として含まれうる。
+- SQLの読取は現行トークンで403のため、集計された数値そのものは未確認。受信処理の成功と、データ保存後の集計確認を区別する。
+- 所有者がCreate Datasetから手動作成する必要はない。Search Consoleの本人認証・サイトマップ送信状況の確認は引き続き未完了。
