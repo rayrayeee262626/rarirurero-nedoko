@@ -1,5 +1,10 @@
 import os,json,urllib.request,urllib.error,subprocess,time
 from pathlib import Path
+from html.parser import HTMLParser
+class Scripts(HTMLParser):
+ def __init__(self):super().__init__();self.sources=[]
+ def handle_starttag(self,tag,attrs):
+  if tag=='script':self.sources.append(dict(attrs).get('src'))
 ROOT=Path(__file__).resolve().parents[2]
 BASE='https://api.cloudflare.com/client/v4/accounts/'+os.environ['CLOUDFLARE_ACCOUNT_ID']+'/pages/projects/print-pon'
 def api(suffix='',method='GET'):
@@ -28,7 +33,8 @@ try:
   try:
    with urllib.request.urlopen('https://print-pon.pages.dev/?release='+sha,timeout=30) as r:html=r.read().decode()
    assert '小学生の計算プリントを無料作成・PDF印刷' in html,'Title not updated'
-   assert html.count('src=\'https://static.cloudflareinsights.com/beacon.min.js\'')+html.count('src="https://static.cloudflareinsights.com/beacon.min.js"')==1,'Analytics injection must occur exactly once'
+   scripts=Scripts();scripts.feed(html)
+   assert scripts.sources.count('https://static.cloudflareinsights.com/beacon.min.js')==1,'Analytics injection must occur exactly once'
    assert 'google-site-verification' in html,'Ownership verification missing'
    for file in ['robots.txt','sitemap.xml','app.js','generator.js','ogp.png','privacy/']:
     with urllib.request.urlopen('https://print-pon.pages.dev/'+file,timeout=30) as r:assert r.status==200 and len(r.read())>0
