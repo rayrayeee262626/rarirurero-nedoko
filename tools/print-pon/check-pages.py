@@ -26,7 +26,7 @@ seen=set()
 for topic in TOPICS:
  path=OUT/topic['slug']/'index.html';text=path.read_text();page=Page(text)
  assert page.h1==1 and len(page.canon)==1 and page.canon[0]=='https://print-pon.pages.dev/'+topic['slug']+'/'
- assert len(page.description)==1 and topic['intro'] in page.description[0]
+ assert len(page.description)==1 and topic['level'] in page.description[0] and topic['scope'] in page.description[0]
  title=''.join(page.titles);assert title not in seen;seen.add(title)
  assert len(page.ids)==len(set(page.ids)),'Duplicate IDs'
  assert '問題例' in text and topic['tip'] in text and topic['note'] in text

@@ -20,14 +20,14 @@ def answer(t,a,b):
  return str(a+b) if op=='add' else str(a-b) if op=='sub' else str(a*b) if op=='mul' else str(a//b)+(f' あまり {a%b}' if a%b else '')
 def render_topic(home,t):
  title=t['title']+'｜無料・答えつきPDF印刷｜ぷりぽんっ'
- desc=f'{t["title"]}を無料で自動作成。{t["level"]}の問題を、答えつきA4 PDFで保存・印刷できます。{t["intro"]}登録不要。'
+ desc=f'{t["title"]}を無料で作成。{t["level"]}、{t["scope"]}。答えつきの横式20問をA4 PDFですぐ保存・印刷できます。問題数の変更・同じ条件で再生成も可能。登録不要。'
  s=home.replace('<body>','<body class="topic-page">')
  s=re.sub(r'<title>.*?</title>',f'<title>{h(title)}</title>',s)
  for attr,key,value in [('name','description',desc),('property','og:title',title),('property','og:description',desc),('property','og:url',SITE+t['slug']+'/'),('name','twitter:title',title),('name','twitter:description',desc)]:
   s=re.sub(rf'<meta {attr}="{key}" content="[^"]*">',f'<meta {attr}="{key}" content="{h(value)}">',s)
  s=re.sub(r'<link rel="canonical" href="[^"]*">',f'<link rel="canonical" href="{SITE}{h(t["slug"])}/">',s)
  hero=f'''<nav class="breadcrumbs" aria-label="パンくず"><a href="/">ホーム</a> › <a href="/#topics">小学{t['grade']}年生のプリント</a> › {h(t['label'])}</nav>
- <section class="topic-hero" aria-labelledby="hero-title"><p class="eyebrow">小学{t['grade']}年生・{h(t['level'])}</p><h1 id="hero-title">{h(t['title'])}<span>無料・答えつき・A4印刷</span></h1><p>{h(t['intro'])}</p><p class="quick-guide">① 問題数を選ぶ → ② 見本を確認 → ③ PDF保存・印刷。20問・答えつきで作成済みです。</p><a class="preview-jump" href="#pdfBtn">すぐに保存・印刷する ↓</a></section>'''
+ <section class="topic-hero" aria-labelledby="hero-title"><p class="eyebrow">小学{t['grade']}年生・{h(t['level'])}</p><h1 id="hero-title">{h(t['title'])}<span>無料・答えつき・A4印刷</span></h1><p>{h(t['intro'])}</p><p class="quick-guide">20問・答えつきで作成済み。下の見本から、そのままPDF保存・印刷できます。</p></section>'''
  s=re.sub(r'<section class="hero".*?</section>',hero,s,count=1,flags=re.S)
  s=s.replace('<!-- TOPIC_DIRECTORY -->','')
  fixed='<div hidden><div id="gradePresets"></div><fieldset id="remainderGroup">'+''.join(f'<input type="radio" name="remainderMode" value="{v}"'+(' checked' if v=='none' else '')+'>' for v in ['none','only','mixed'])+'</fieldset>'
@@ -36,6 +36,19 @@ def render_topic(home,t):
  fixed+=f'<p class="unit-setting"><strong>{h(t["level"])}</strong><br>この単元に合う条件を設定済みです。</p><div class="control-group"><label for="questionCount">1まいの問題数</label><select id="questionCount">'+''.join(f'<option value="{n}"'+(' selected' if n==20 else '')+f'>{n}問</option>' for n in t['counts'])+'</select></div>'
  s=re.sub(r'<section class="grade-picker".*?</details>',fixed,s,count=1,flags=re.S)
  s=s.replace('もんだいをえらぼう','問題数をえらぼう').replace('好きな計算と数字をえらんでね','計算の条件は設定済みです')
+ # Put the completed worksheet first in both DOM and visual order.
+ start=s.index('<div class="panel controls">')
+ middle=s.index('<div class="panel preview-panel">',start)
+ end=s.index('</section>',middle)
+ controls=s[start:middle];preview=s[middle:end]
+ button=re.search(r'<button id="generateBtn".*?</button>',controls,re.S).group(0)
+ controls=controls.replace(button,'')
+ controls=controls.replace('<span class="number-bubble">1</span>','<span class="number-bubble">2</span>').replace('問題数をえらぼう','問題数・答えの設定')
+ controls=re.sub(r'<a class="preview-jump" href="#pdfBtn">.*?</a>','',controls)
+ preview=preview.replace('<span class="number-bubble blue">2</span>','<span class="number-bubble blue">1</span>').replace('できあがりをチェック','見本を見て保存・印刷').replace('プリントの見本だよ','まずはこの20問で始められます')
+ preview=preview.replace('<div class="preview-tabs"',button+'<a class="unit-settings-link" href="#questionCount">問題数・答えの有無を変更する ↓</a><div class="preview-tabs"')
+ s=s[:start]+preview+controls+s[end:]
+
  symbol={'add':'＋','sub':'−','mul':'×','div':'÷'}[t['settings']['op']]
  questions=''.join(f'<li>{a} {symbol} {b} = ______'+(' あまり ______' if t['settings']['op']=='div' and a%b else '')+'</li>' for a,b in t['samples'])
  answers='、'.join(f'{a} {symbol} {b} = {answer(t,a,b)}' for a,b in t['samples'])
