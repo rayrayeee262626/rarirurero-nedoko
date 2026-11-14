@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import {pathToFileURL} from 'node:url';
 const root=new URL('../../',import.meta.url);
 const topics=JSON.parse(fs.readFileSync(new URL('topics.json',import.meta.url)));
 const sandbox={module:{exports:{}},Math};vm.runInNewContext(fs.readFileSync(new URL('dist/generator.js',root),'utf8'),sandbox);
@@ -22,7 +21,8 @@ for(const topic of topics){for(const count of topic.counts)for(let seed=1;seed<=
  for(const [a,b] of topic.samples){assert(a>=g.range(topic.settings.left).min&&a<=g.range(topic.settings.left).max);assert(b>=g.range(topic.settings.right).min&&b<=g.range(topic.settings.right).max);if(topic.settings.op==='div'){if(topic.settings.maxQuotient)assert(Math.floor(a/b)<=topic.settings.maxQuotient);if(topic.settings.remainderMode==='none')assert.equal(a%b,0);if(topic.settings.remainderMode==='only')assert(a%b>0);}}
  if(topic.grade===3&&topic.settings.op==='div')assert.equal(topic.settings.maxQuotient,9);
 }
-const worker=(await import(pathToFileURL(new URL('dist/_worker.js',root).pathname))).default;
+const workerSource=fs.readFileSync(new URL('event-worker.mjs',import.meta.url),'utf8').replace('__TOPIC_IDS__',JSON.stringify(topics.map(t=>t.slug)));
+const worker=(await import('data:text/javascript;base64,'+Buffer.from(workerSource).toString('base64'))).default;
 const writes=[];const env={PRINT_PON_EVENTS:{writeDataPoint:x=>writes.push(x)},ASSETS:{fetch:()=>new Response('static')}};
 function req(data,options={}){return new Request('https://print-pon.pages.dev/api/events',{method:'POST',headers:{Origin:'https://print-pon.pages.dev','Content-Type':'application/json',...options.headers},body:JSON.stringify(data)});}
 for(const event of ['generate','pdf','print'])assert.equal((await worker.fetch(req({event,page:topics[0].slug}),env)).status,204);

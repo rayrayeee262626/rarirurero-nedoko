@@ -1,0 +1,4 @@
+{
+  "enabled": false,
+  "reason": "Cloudflare account requires initial Analytics Engine activation; no action events are sent until it is enabled."
+}

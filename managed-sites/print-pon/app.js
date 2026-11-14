@@ -7,7 +7,7 @@ const topic=JSON.parse(document.querySelector('#topicConfig')?.textContent||'nul
 const URL_SITE='https://print-pon.pages.dev/'+(topic?topic.slug+'/':'');
 const worksheetTitle=topic?`小${topic.grade} ${topic.label}`:'けいさん プリント';
 function track(event){
-  if(navigator.doNotTrack==='1'||navigator.globalPrivacyControl)return;
+  if(document.documentElement.dataset.events!=='enabled'||navigator.doNotTrack==='1'||navigator.globalPrivacyControl)return;
   // Fixed action and public page ID only: no cookies, settings, problems or identifiers.
   fetch('/api/events',{method:'POST',credentials:'omit',referrerPolicy:'no-referrer',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({event,page:topic?topic.slug:'home'})}).catch(()=>{});
 }

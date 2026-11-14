@@ -46,3 +46,7 @@ home=(OUT/'index.html').read_text()
 for topic in TOPICS:assert f'href="/{topic["slug"]}/"' in home
 assert not (OUT/'AGENTS.md').exists()
 print('10 unique crawlable topic pages: titles, descriptions, headings, examples, canonicals, internal links and sitemap passed.')
+
+events=json.loads((ROOT/'tools/print-pon/events-enabled.json').read_text())['enabled']
+assert (OUT/'_worker.js').exists()==events and (OUT/'_routes.json').exists()==events
+assert f'data-events="{"enabled" if events else "disabled"}"' in home
