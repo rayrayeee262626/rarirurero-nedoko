@@ -8,15 +8,6 @@ def request(url,payload=None,text=False):
   with urllib.request.urlopen(req,timeout=45) as r:return r.status,json.load(r)
  except urllib.error.HTTPError as e:return e.code,{'error':'HTTP '+str(e.code)}
 base='https://api.cloudflare.com/client/v4/accounts/'+account
-status,pages=request(base+'/pages/projects/print-pon')
-if status==200:
- for ident in ['02e6e2e2-d023-498c-964d-1d7aee2866e6']:
-  s,d=request(base+'/pages/projects/print-pon/deployments/'+ident)
-  if s==200:print('Original Web Analytics tag:',(d.get('result',{}).get('build_config') or {}).get('web_analytics_tag'))
-status,sites=request(base+'/rum/site_info/list?per_page=100');print('RUM site-list HTTP:',status)
-if status==200:
- matches=[s for s in sites.get('result',[]) if s.get('site_token')=='60038f3f421648d3bc5ecf09f3cd4061' or 'print-pon.pages.dev' in json.dumps(s.get('rules',[]))]
- print('RUM matching site tags:',[s.get('site_tag') for s in matches])
 query="SELECT toDate(timestamp) AS day, blob1 AS event, blob2 AS page, SUM(_sample_interval * double1) AS actions FROM print_pon_events WHERE timestamp >= NOW() - INTERVAL '28' DAY GROUP BY day,event,page ORDER BY day DESC,actions DESC LIMIT 500 FORMAT JSON"
 s,d=request(base+'/analytics_engine/sql',query,True);print('Action aggregate HTTP:',s);print('ACTION_DATA',json.dumps(d.get('data',[]) if s==200 else d))
 now=datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
