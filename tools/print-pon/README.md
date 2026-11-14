@@ -6,7 +6,7 @@ https://print-pon.pages.dev/ の既存Cloudflare Pagesプロジェクトprint-po
 
 元の制作ZIPは未入手。Cloudflareのデプロイ詳細APIから本番デプロイ02e6e2e2-d023-498c-964d-1d7aee2866e6の全14ファイル一覧を取得し、固定URLから回収した静的配信一式をmanaged-sites/print-ponに保存した。自動挿入されたAnalyticsタグはHTMLから除去し、既存のPagesによる自動注入を継続する。recovered-release.jsonに回収時のSHA-256を記録。元の制作履歴やZIPそのものを復元したという意味ではない。
 
-公開前にAPIでサーバー側Functionsなし、Git連携なし、環境変数なし、全ファイル一覧を照合する。想定外があれば公開せず停止する。配信設定をPATCHせず、既存プロジェクトへWranglerで直接デプロイする。
+公開前にAPIで既存プロジェクト、Git連携・環境変数・配信ファイル一覧を照合する。匿名イベントを有効にする場合だけ、専用のWorkerとAnalytics Engine bindingを追加する。想定外の設定があれば公開せず停止する。既存プロジェクトへWranglerで直接デプロイする。
 
 ## 更新
 
@@ -32,6 +32,8 @@ npm run check、npm test（既存13テスト）成功。修正済み配信ファ
 - 検索語は想定した検索意図に基づく候補。検索ボリューム・順位を実測したとの主張はしていない。Search Consoleで公開後の実際の検索語を検証する。
 
 ### 操作の匿名集計
+
+現在はアカウントのAnalytics Engine初回有効化が必要なため、events-enabled.jsonのenabledをfalseにしている。操作イベントの送信とWorker配信は停止し、既存Web Analyticsだけを継続。有効化後にtrueへ変更すると、同じテストと自動公開で集計を有効にできる。有料プランへの変更は行っていない。以下は有効時の仕様。
 
 既存のCloudflare Web Analyticsにはカスタムイベントを無理に混ぜず、そのタグとページ閲覧計測を維持する。Workers Analytics Engineのprint_pon_eventsデータセットに、最小限のPages Workerからイベントだけを記録する。
 

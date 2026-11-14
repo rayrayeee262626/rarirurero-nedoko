@@ -6,6 +6,8 @@ ROOT=Path(__file__).resolve().parents[2]
 SOURCE=ROOT/'managed-sites/print-pon'
 TOPICS=json.loads((ROOT/'tools/print-pon/topics.json').read_text())
 SITE='https://print-pon.pages.dev/'
+EVENTS=json.loads((ROOT/'tools/print-pon/events-enabled.json').read_text())['enabled']
+assert isinstance(EVENTS,bool)
 def h(s):return escape(str(s),quote=True)
 def directory():
  groups=[]
@@ -57,14 +59,18 @@ def build():
  out=ROOT/'dist'
  if out.exists():shutil.rmtree(out)
  shutil.copytree(SOURCE,out,ignore=shutil.ignore_patterns('AGENTS.md'))
- template=(SOURCE/'index.html').read_text()
+ template=(SOURCE/'index.html').read_text().replace('<html lang="ja">','<html lang="ja" data-events="'+('enabled' if EVENTS else 'disabled')+'">')
  (out/'index.html').write_text(template.replace('<!-- TOPIC_DIRECTORY -->',directory()))
  for t in TOPICS:
   dest=out/t['slug']/'index.html';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(render_topic(template,t))
  urls=['','about/','privacy/','terms/']+[t['slug']+'/' for t in TOPICS]
  (out/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{SITE}{u}</loc></url>\n' for u in urls)+'</urlset>\n')
  worker=(ROOT/'tools/print-pon/event-worker.mjs').read_text().replace('__TOPIC_IDS__',json.dumps([t['slug'] for t in TOPICS]))
- (out/'_worker.js').write_text(worker)
- (out/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/events'],'exclude':[]}))
- print(f'Print PON: {len(TOPICS)} static topic pages, sitemap, anonymous event endpoint in dist/')
+ if EVENTS:
+  (out/'_worker.js').write_text(worker)
+  (out/'_routes.json').write_text(json.dumps({'version':1,'include':['/api/events'],'exclude':[]}))
+ privacy=out/'privacy/index.html'
+ state='現在、操作回数の匿名集計は有効です。' if EVENTS else '現在、操作回数の匿名集計は無効で、操作イベントは送信していません。ページ閲覧のWeb Analyticsは継続しています。'
+ privacy.write_text(privacy.read_text().replace('<!-- EVENT_STATUS -->','<p>'+state+'</p>'))
+ print(f'Print PON: {len(TOPICS)} static topic pages, sitemap, action events {'enabled' if EVENTS else 'disabled'} in dist/')
 if __name__=='__main__':build()

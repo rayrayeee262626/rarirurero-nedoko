@@ -1,5 +1,8 @@
 """Read aggregate counters only; never fetch or print a visitor identifier."""
 import os,urllib.request,urllib.error,json
+from pathlib import Path
+if not json.loads((Path(__file__).parent/'events-enabled.json').read_text())['enabled']:
+ raise SystemExit('Action tracking is disabled until Analytics Engine is activated. Existing Web Analytics remains enabled.')
 account=os.environ['CLOUDFLARE_ACCOUNT_ID']
 query="""SELECT toDate(timestamp) AS day, blob1 AS event, blob2 AS page,
 SUM(_sample_interval * double1) AS actions
