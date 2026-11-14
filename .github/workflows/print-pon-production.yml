@@ -1,7 +1,7 @@
 name: Deploy Print PON with Wrangler
 on:
   push:
-    branches: [codex/print-pon-connection, main]
+    branches: [main]
     paths:
       - managed-sites/print-pon/**
       - tools/print-pon/**
