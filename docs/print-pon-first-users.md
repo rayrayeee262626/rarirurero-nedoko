@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | Cloudflare Web Analytics | 公開ページで実行タグ1個。実際の受信先 /cdn-cgi/rum がHTTP 204。ブラウザーのエラーなし | 管理画面のVisits/PVと集計反映。既存トークンの解析閲覧はHTTP 403 |
 | 匿名の操作集計 | 所有者の初回有効化後、プレビューbindingがHTTP 204で接続成功。本番計測の有効化を進める | 2026-11-14の権限追加後、SQL読取も成功。現時点の3件は動作確認分 |
-| Search Console | 所有権確認タグあり。sitemap.xmlに14 URL、新しい10単元をすべて含む。各ページは静的本文・自己canonical・クロール許可あり | 所有権確認の完了、サイトマップの送信・読込状況、Googleの実際のインデックス登録状態 |
+| Search Console | 所有権確認タグあり。sitemap.xmlに14 URL、新しい10単元をすべて含む。各ページは静的本文・自己canonical・クロール許可あり | 所有者の画面でサイトマップ送信済みを確認。ただし取得失敗。Googleの実際のインデックス登録状態は未確認 |
 
 Web Analyticsのテストで、ops_checkという確認用リンクから1回のページ閲覧を送信した。この確認閲覧が数字に混ざる可能性がある。HTTP 204は受信先がリクエストを受け付けた証拠であり、ダッシュボードへの反映や利用者の存在を証明するものではない。Visitsを実人数と断定しない。
 
@@ -151,3 +151,17 @@ https://print-pon.pages.dev/grade-3/division-remainder/
 取得した値は、九九ページのgenerate=1、pdf=1、print=1。先に実施した動作確認の3操作と一致する。一般利用者が3人いることを示す数字ではない。これで匿名イベントの送信・保存・集計の読取を確認できた。以後、このレポートは保存済みの認証で取得できる。
 
 この文書内のSQL読取403の記載は、権限追加前の確認記録。Web Analyticsサイト設定の参照に必要なAccount Settings Readや、Search Consoleの認証状態は別の話であり、今回それらまで確認済みと扱わない。
+
+## Search Consoleの取得失敗の追加確認
+
+2026-11-14、所有者がsitemap.xmlを送信した画面を確認。Search Consoleは「取得できませんでした」「サイトマップを読み込めませんでした」、検出ページ数0と表示。詳細部分をタップしても追加理由は表示されなかった。
+
+公開サイト側ではGET/HEADとも200、HTTP→HTTPSは301で正しいURLへ転送。XMLは正常に解析でき、同一サイトの14 URLを含む。robots.txtもクロールを許可。GooglebotとGoogle-InspectionToolのUser-Agentによる取得も200。これらの手元のHTTP確認だけで、実際のGoogle取得成功とは扱わなかった。
+
+さらに、ログイン不要のGoogle公式リッチリザルトテストを実行し、Google側でもトップとsitemap.xmlの両方が「Crawled successfully」となることを確認した。サイトマップURLの成功日時は2026-11-14 05:25:36 UTC。
+確認結果： https://search.google.com/test/rich-results/result?id=nDBEyTSRP-A10k6OmHVKAA
+
+これはGoogleから対象URLへ到達してクロールできた証拠であり、Search Consoleのサイトマップ処理成功や検索インデックス登録成功を意味しない。現時点で配信内容を修正する根拠は見つかっていないため、サイトマップの形式変更・削除・反復送信は行わない。
+
+Googleの公式案内では、サイトマップ取得失敗時は数日間再試行する。まず1〜2日後にSearch Consoleの状態を再確認する。失敗が続く場合は公開URL検査のライブテストや追加のエラー情報を使い、次の対応を決める。
+公式案内： https://support.google.com/webmasters/answer/7451001?hl=ja
