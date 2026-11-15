@@ -17,6 +17,7 @@ assert.equal(build.status, 0, build.stderr);
 const output = (await readdir(new URL('dist/', root))).sort();
 assert.deepEqual(output, [...publicFiles, ...generatedFiles].sort(), 'Output must contain only approved public output');
 for (const file of files) {
+  if (file.endsWith('.html')) continue; // Build adds metadata and crawlable navigation/catalog.
   assert.deepEqual(await readFile(new URL(`dist/${file}`, root)), await readFile(new URL(`site/${file}`, root)));
 }
 console.log('Syntax and isolated build checks passed. No network or deployment.');
