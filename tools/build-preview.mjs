@@ -32,3 +32,4 @@ await writeFile(new URL('_headers', output), `/*
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 `);
 console.log('Prepared isolated preview: no production BBS, counter, X scripts, or external fonts.');
+await writeFile(new URL('robots.txt', output), 'User-agent: *\nDisallow: /\n');

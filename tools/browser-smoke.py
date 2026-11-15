@@ -55,7 +55,7 @@ def route_request(route):
     assert file.is_relative_to(OUTPUT.resolve())
     if not file.is_file():
         return route.fulfill(status=404, body='missing')
-    mime = {'.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.webp': 'image/webp'}[file.suffix]
+    mime = {'.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css', '.json': 'application/json', '.webp': 'image/webp', '.png': 'image/png'}[file.suffix]
     return route.fulfill(body=file.read_bytes(), content_type=mime)
 
 with sync_playwright() as p:
@@ -96,7 +96,7 @@ with sync_playwright() as p:
     expect(page.locator('#cms-projects')).to_contain_text('準備中')
     scenario = 'error'
     page.reload()
-    expect(page.locator('#cms-projects')).to_contain_text('読み込めませんでした')
+    expect(page.locator('#cms-projects .item-card')).to_have_count(len(catalog['projects']))
     scenario = 'normal'
     page.goto('https://local.test/notes')
     expect(page.locator('h1')).to_have_text('サイトの入口を整理しました')
@@ -126,4 +126,11 @@ with sync_playwright() as p:
     expect(page.locator('.nav-toggle')).to_have_attribute('aria-expanded', 'true')
     assert not errors, errors
     print('Four-section browser checks passed: 4 widths, note-only links, project lists, legacy URLs, empty/error states and isolated BBS.')
+    offline = browser.new_context(java_script_enabled=False, service_workers='block')
+    offline.route('**/*', route_request)
+    static_page = offline.new_page()
+    static_page.goto('https://local.test/works')
+    expect(static_page.locator('nav a')).to_have_count(6)
+    expect(static_page.locator('.item-card')).to_have_count(len(catalog['works']))
+    offline.close()
     browser.close()
