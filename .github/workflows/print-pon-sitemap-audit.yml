@@ -1,0 +1,20 @@
+name: Audit Print PON sitemap discovery
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/print-pon-sitemap-audit]
+    paths:
+      - docs/print-pon-sitemap-audit/audit.py
+      - .github/workflows/print-pon-sitemap-audit.yml
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Fetch robots, XML and every page without analytics traffic
+        run: python3 docs/print-pon-sitemap-audit/audit.py
