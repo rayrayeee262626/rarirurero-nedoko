@@ -1,23 +1,27 @@
 {
-  "approved_source_commit": "9b929d49235199a34f545a590e6dcdd6b3161f46",
+  "approved_source_commit": "77a9304e66531d1183754a9e8befdab339f592c4",
   "project": "rarirurero-nedoko",
   "files": {
     "_worker.js": "9d58b82965d4f61071a2b522699fa94f96d49f2085b9c99e97f54f9810aa4067",
-    "about.html": "2a9ac8e87d25b2b11c1dca9f2aab32f84e02b4bbc9ca7ef93924cf780e261904",
-    "app.js": "e0bc19014af2b295e2b52eab581b3cdcf563478dbddc8e36400fb99ebac3c44d",
-    "article.html": "250ffa5c75bbab80d4a28e1da4eab01814fa2f186d3e95b8e62c5a566e89e1f4",
-    "bbs.html": "0f70adce421a886e1fbaeea34dd924462b9f685b7b1405a0d5b5b3c4954013e5",
+    "about.html": "23279e69c5f68cc024ea0f2be317ba90af06fc8e1c30334dd8e90316d0b5fe2d",
+    "app.js": "d0ec5936ba64c23ceaf6055d79f43293a308d83e785760b38111c4a32b509c00",
+    "article.html": "efed3dc677ba4c417f77b96ab8401d78ba5f488a8d2c56cfbebcc09b76f68580",
+    "bbs.html": "3a0c40343085b005ee3fdba0189b16e145f3bcda95b0b7135715f2f03fd7b038",
     "bbs.js": "a1debdc2ead83fd04d809afbb0d3a1f534ccb8fdd61a319aa32eddd416ca610a",
     "catalog.json": "0ef5336acdffe2a218a170475366461c6898a83f8d4112b13eb1396e24fdf033",
-    "content.js": "f421d76d5d3659e3571de5c081d3756357d05c1cad929798833f925c054e4fcd",
-    "index.html": "3d64e9e81f9a5c9c81f9c57b6e2cc64874e96f73f4384c57e8823efde2845892",
+    "content.js": "18c0bad04db591fb2f73a152df405066b82feab72458d15ff209724727c11b3c",
+    "favicon.png": "743084f436fcc483066e68782dd4724f9b75da9eee4e91db4112422aa935977e",
+    "index.html": "63afcbceacb9a5d1b1cdadde33866fffa8cac5109d22813f44ab6a295a51fd6a",
     "legacy-posts.json": "18a5ef927f095af896b2f7da32f534b195031e6086961afd13025ab4bcb66e1f",
     "legacy.js": "4b582a0b1146e3569db0984165be41467f9578a52d792ecae89f0404bf934b25",
     "mascot.webp": "ca0cc127c215fedb4d830dcb8a8ecfa5300b91064b912d295f85ba771832190b",
-    "notes.html": "6c7badec021d2dcc48cb1d0b8c83a7f443ea2ded8830e06c37c92a4bd1e05204",
-    "projects.html": "62c56f0d617149fcd5eb113c67c198846b36693073e74587426cc24ff6f9548b",
+    "notes.html": "d4c5fc62a9286856c1629afd8ec0b5ece84441bb47c2b50e9b9e57ad69f8d7bc",
+    "projects.html": "257e1ed984bf65aeae9ed1484b0faad53a1af12fff68bc9c64876832a749d959",
+    "robots.txt": "6fdc739523860ffc9270c385b3f775c3a802386edbe155f89b5d6638dc8109c6",
+    "site-view.js": "b746eafe0e175b572c3ea7c643779e571bdb769f81e791acb08f9da70a871910",
+    "sitemap.xml": "e51e6fb163f1cc75172a4cb3f23c34551e28280bccca270009889677f2845d77",
     "styles.css": "fd8920dbd2111f266d08de8deccb9d77a433012401e420e68873c9c853155b70",
-    "works.html": "dd9d79b316eb41fae0866009c7f238fe33053312f5befbe17da6f4fc14c12426",
-    "writings.html": "335930eff6987c10850ee654f70da8bd08d67afab015c6cbc1bcce6ccc5322c2"
+    "works.html": "60e8e8427676a521c32dd508130c5d404c7ccf667565912db9765632b7fe72a6",
+    "writings.html": "376bc7509239a8d43c48cdf30d85d8abf265b3b10ad69fdfba2b1eba9f617d8d"
   }
 }
