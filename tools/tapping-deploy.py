@@ -17,7 +17,7 @@ def api(path='',method='GET',payload=None):
  if not data.get('success'):raise RuntimeError('Cloudflare API request failed; response withheld')
  return data['result']
 def public(path):
- with urllib.request.urlopen(ORIGIN+'/'+path,timeout=30) as r:return r.read()
+ return subprocess.check_output(['curl','--fail','--silent','--show-error','--location','--max-time','30',ORIGIN+'/'+path])
 p=api('/'+PROJECT)
 if p is None:
  p=api(method='POST',payload={'name':PROJECT,'production_branch':'main','deployment_configs':{'production':{},'preview':{}}})
