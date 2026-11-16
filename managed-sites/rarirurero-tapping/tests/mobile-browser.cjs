@@ -32,7 +32,7 @@ const http=require('node:http'),fs=require('node:fs/promises'),path=require('nod
   assert.ok((await page.locator('#message p').textContent()).startsWith(sent+'回タップ！'),'Each in-time physical touch counts exactly once');
   const score=await page.locator('#score').textContent();
   const forms=JSON.parse(await fs.readFile(path.join(root,'manifest.json'),'utf8'));
-  assert.equal(forms.length,10);
+  assert.equal(forms.length,20);
   const expected=forms[Number(score.replaceAll(',',''))%forms.length];
   assert.equal(await page.locator('#message strong').textContent(),expected.name+'になった！');
   assert.ok((await page.locator('#robot').getAttribute('src')).endsWith(expected.image));
@@ -48,7 +48,7 @@ const http=require('node:http'),fs=require('node:fs/promises'),path=require('nod
   assert.equal(await page.locator('.reaction-motion').evaluate(e=>e.style.transform),'','Motion clears after finish');
   await page.locator('#start').tap();assert.equal(await page.locator('#score').textContent(),'0');
   assert.deepEqual(errors,[]);
-  console.log(`PASS mobile touch ${viewport.width}x${viewport.height}: ${sent}/${sent} in-time taps, all 10 new results decoded, image visible, bounded effects, deadline, replay, no browser errors`);
+  console.log(`PASS mobile touch ${viewport.width}x${viewport.height}: ${sent}/${sent} in-time taps, all 20 results decoded, image visible, bounded effects, deadline, replay, no browser errors`);
   await context.close();
  }
  }finally{await browser.close();server.close();}

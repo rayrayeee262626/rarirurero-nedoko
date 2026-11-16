@@ -1,0 +1,52 @@
+[
+  {
+    "id": 11,
+    "name": "ボロボロらりるれろ",
+    "image": "11_boroboro.png"
+  },
+  {
+    "id": 12,
+    "name": "充電切れらりるれろ",
+    "image": "12_battery_empty.png"
+  },
+  {
+    "id": 13,
+    "name": "フリーズらりるれろ",
+    "image": "13_frozen.png"
+  },
+  {
+    "id": 14,
+    "name": "バグったらりるれろ",
+    "image": "14_glitch.png"
+  },
+  {
+    "id": 15,
+    "name": "暴走らりるれろ",
+    "image": "15_rampage.png"
+  },
+  {
+    "id": 16,
+    "name": "ひび割れらりるれろ",
+    "image": "16_cracked.png"
+  },
+  {
+    "id": 17,
+    "name": "煙ふきらりるれろ",
+    "image": "17_smoking.png"
+  },
+  {
+    "id": 18,
+    "name": "オーバーヒートらりるれろ",
+    "image": "18_overheat.png"
+  },
+  {
+    "id": 19,
+    "name": "泥だらけらりるれろ",
+    "image": "19_muddy.png"
+  },
+  {
+    "id": 20,
+    "name": "故障寸前らりるれろ",
+    "image": "20_critical_damage.png"
+  }
+]
