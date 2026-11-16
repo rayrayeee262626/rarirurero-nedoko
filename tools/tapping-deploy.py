@@ -36,7 +36,7 @@ for attempt in range(8):
  try:
   assert json.loads(public('_tapping-project.json'))==MARKER
   manifest=json.loads((DIST/'manifest.json').read_text())
-  assert len(manifest)==150
+  assert len(manifest)==10
   names=['index.html','game.js','config.js','reactions.js','style.css','results.js','manifest.json','assets/normal.png']+[f['image'] for f in manifest]
   def verify(name):
    assert hashlib.sha256(public(name)).digest()==hashlib.sha256((DIST/name).read_bytes()).digest(),'Public file mismatch: '+name

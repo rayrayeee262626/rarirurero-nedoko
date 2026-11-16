@@ -1,0 +1,10 @@
+01_nikoniko.png = にこにこらりるれろ
+02_gachigire.png = ガチギレらりるれろ
+03_guttari.png = ぐったりらりるれろ
+04_shonbori.png = しょんぼりらりるれろ
+05_doyagao.png = ドヤ顔らりるれろ
+06_naki.png = 泣きらりるれろ
+07_odoroki.png = 驚きらりるれろ
+08_teretere.png = てれてれらりるれろ
+09_muhyoujou.png = 無表情らりるれろ
+10_bakushou.png = 爆笑らりるれろ
