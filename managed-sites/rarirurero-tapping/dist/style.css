@@ -76,3 +76,6 @@
 @media(max-width:899px) and (max-height:479px){
  body{height:auto;min-height:100svh}main{flex:none;grid-template-rows:auto auto auto auto}.machine .arena{flex:none;height:180px}
 }
+
+/* Physics moves only artwork; the pointer target remains fixed. */
+.reaction-motion{transform-origin:50% 50%;will-change:transform}

@@ -5,7 +5,7 @@ test('small reactions dominate; large reaction chance grows with time and all mo
  let early=0,late=0;
  for(let i=0;i<1000;i++){early+=chooseReaction(0,()=>i/1000).big;late+=chooseReaction(1,()=>i/1000).big;}
  assert.equal(early,120);assert.equal(late,300);
- for(let i=0;i<5;i++){let n=0;const r=chooseReaction(.5,()=>n++===0?0:(i+.5)/5);assert.equal(r.motion,MOTIONS[i]);}
+ for(let i=0;i<MOTIONS.length;i++){let n=0;const r=chooseReaction(.5,()=>n++===0?0:(i+.5)/MOTIONS.length);assert.equal(r.motion,MOTIONS[i]);}
 });
 test('random point origins stay readable within mobile widths and vary across lanes',()=>{
  for(const w of [280,320,375,450]){const xs=new Set();for(let i=0;i<1000;i++){const p=pointPosition(w,288,i);assert.ok(p.x>=42&&p.x<=w-42);assert.ok(p.y>=65&&p.y<=130);xs.add(Math.floor(p.x/30));}assert.ok(xs.size>=5);}
@@ -22,6 +22,7 @@ class El {
  getAnimations(){return this.anims;}
 }
 test('rapid taps keep effects bounded; round cleanup removes animations and overlays',()=>{
+ globalThis.requestAnimationFrame=()=>1;globalThis.cancelAnimationFrame=()=>{};
  globalThis.document={createElement:()=>new El()};globalThis.matchMedia=()=>({matches:false});
  const nodes=Object.fromEntries(['character','robot','arena','machine','effects'].map(k=>[k,new El()]));nodes.robot.src='assets/normal.png';
  const fx=createReactions(nodes);
