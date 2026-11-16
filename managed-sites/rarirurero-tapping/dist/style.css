@@ -79,3 +79,7 @@
 
 /* Physics moves only artwork; the pointer target remains fixed. */
 .reaction-motion{transform-origin:50% 50%;will-change:transform}
+
+/* Lead the result message with the earned points, then the transformation. */
+#message .result-points{display:block;font-size:clamp(20px,5.5vw,27px);font-weight:900;line-height:1.3;margin:0 0 4px;color:var(--green);font-variant-numeric:tabular-nums}
+#message .result-form{display:block}

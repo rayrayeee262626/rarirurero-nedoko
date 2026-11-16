@@ -34,7 +34,10 @@ const http=require('node:http'),fs=require('node:fs/promises'),path=require('nod
   const forms=JSON.parse(await fs.readFile(path.join(root,'manifest.json'),'utf8'));
   assert.equal(forms.length,20);
   const expected=forms[Number(score.replaceAll(',',''))%forms.length];
-  assert.equal(await page.locator('#message strong').textContent(),expected.name+'になった！');
+  assert.equal(await page.locator('#message .result-points').textContent(),score+'ポイント獲得！');
+  assert.ok(await page.locator('#message').evaluate(e=>e.firstElementChild.classList.contains('result-points')));
+  assert.ok(await page.locator('#start').evaluate(e=>e.getBoundingClientRect().bottom<=innerHeight));
+  assert.equal(await page.locator('#message .result-form').textContent(),expected.name+'になった！');
   assert.ok((await page.locator('#robot').getAttribute('src')).endsWith(expected.image));
   await page.locator('#robot').evaluate(img=>img.decode());
   assert.ok(await page.locator('#robot').evaluate(img=>img.naturalWidth>0));
