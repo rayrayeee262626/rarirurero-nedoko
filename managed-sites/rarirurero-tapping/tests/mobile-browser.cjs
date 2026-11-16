@@ -28,6 +28,18 @@ const http=require('node:http'),fs=require('node:fs/promises'),path=require('nod
   await page.waitForFunction(()=>document.querySelector('.machine.result'),{},{timeout:14000});
   assert.match(await page.locator('#message p').textContent(),/^130回タップ！/,'Each physical touch counts exactly once');
   const score=await page.locator('#score').textContent();
+  const forms=JSON.parse(await fs.readFile(path.join(root,'manifest.json'),'utf8'));
+  assert.equal(forms.length,150);
+  const expected=forms[Number(score.replaceAll(',',''))%150];
+  assert.equal(await page.locator('#message strong').textContent(),expected.name+'になった！');
+  assert.ok((await page.locator('#robot').getAttribute('src')).endsWith(expected.image));
+  await page.locator('#robot').evaluate(img=>img.decode());
+  assert.ok(await page.locator('#robot').evaluate(img=>img.naturalWidth>0));
+  // All supplied candidates decode in an actual browser, without preloading during gameplay.
+  await page.evaluate(async forms=>{
+   let next=0;await Promise.all(Array.from({length:6},async()=>{while(next<forms.length){const f=forms[next++];const img=new Image();img.src=f.image;await img.decode();if(!img.naturalWidth)throw Error(f.image);}}));
+  },forms);
+
   await page.touchscreen.tap(target.x+target.width/2,target.y+target.height*.6);
   assert.equal(await page.locator('#score').textContent(),score,'Result cannot receive points');
   assert.equal(await page.locator('.reaction-motion').evaluate(e=>e.style.transform),'','Motion clears after finish');

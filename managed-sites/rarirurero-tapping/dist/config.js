@@ -1,9 +1,8 @@
+import forms from './results.js';
 export const config = {
  duration: 10000,
  normalImage: 'assets/normal.png',
- forms: [
- ['にこにこ','smile'],['ガチギレ','angry'],['ぐったり','tired'],['王様','king'],['闇堕ち','dark'],['金ピカ','gold'],['アイドル','idol'],['ボロボロ','broken'],['宇宙飛行士','space'],['覚醒','awake']
- ].map(([name,id])=>({name:name+'らりるれろ',id,image:`assets/${id}.png`})),
+ forms,
  selectForm: (score, forms) => forms[score % forms.length]
 };
 export function randomPoints(random=Math.random){return Math.floor(random()*100)+1;}

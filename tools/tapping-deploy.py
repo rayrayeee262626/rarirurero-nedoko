@@ -1,5 +1,6 @@
 """Deploy only the independent tapping project; never mutate existing sites."""
 import hashlib,json,os,subprocess,time,urllib.request,urllib.error
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 PROJECT='rarirurero-tapping-public'
 ROOT=Path(__file__).resolve().parents[1]
@@ -34,8 +35,12 @@ subprocess.run(['npx','--yes','--package=wrangler@4.162.0','wrangler','pages','d
 for attempt in range(8):
  try:
   assert json.loads(public('_tapping-project.json'))==MARKER
-  for name in ['index.html','game.js','config.js','reactions.js','style.css']+['assets/'+n+'.png' for n in ['normal','smile','angry','tired','dark','gold','king','idol','broken','space','awake']]:
+  manifest=json.loads((DIST/'manifest.json').read_text())
+  assert len(manifest)==150
+  names=['index.html','game.js','config.js','reactions.js','style.css','results.js','manifest.json','assets/normal.png']+[f['image'] for f in manifest]
+  def verify(name):
    assert hashlib.sha256(public(name)).digest()==hashlib.sha256((DIST/name).read_bytes()).digest(),'Public file mismatch: '+name
+  with ThreadPoolExecutor(max_workers=6) as pool:list(pool.map(verify,names))
   break
  except Exception:
   if attempt==7:raise
