@@ -98,5 +98,55 @@
     "id": "20",
     "name": "故障寸前らりるれろ",
     "image": "results/20_critical_damage.png"
+  },
+  {
+    "id": "21",
+    "name": "金ピカらりるれろ",
+    "image": "results/21_gold.png"
+  },
+  {
+    "id": "22",
+    "name": "銀ピカらりるれろ",
+    "image": "results/22_silver.png"
+  },
+  {
+    "id": "23",
+    "name": "覚醒らりるれろ",
+    "image": "results/23_awake.png"
+  },
+  {
+    "id": "24",
+    "name": "超覚醒らりるれろ",
+    "image": "results/24_ultra_awake.png"
+  },
+  {
+    "id": "25",
+    "name": "闇堕ちらりるれろ",
+    "image": "results/25_dark.png"
+  },
+  {
+    "id": "26",
+    "name": "神化らりるれろ",
+    "image": "results/26_divine.png"
+  },
+  {
+    "id": "27",
+    "name": "発光らりるれろ",
+    "image": "results/27_glow.png"
+  },
+  {
+    "id": "28",
+    "name": "オーラ全開らりるれろ",
+    "image": "results/28_rainbow_aura.png"
+  },
+  {
+    "id": "29",
+    "name": "雷神らりるれろ",
+    "image": "results/29_thunder.png"
+  },
+  {
+    "id": "30",
+    "name": "炎神らりるれろ",
+    "image": "results/30_fire.png"
   }
 ]
