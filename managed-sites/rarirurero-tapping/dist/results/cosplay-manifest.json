@@ -1,0 +1,52 @@
+[
+  {
+    "id": 31,
+    "name": "社長らりるれろ",
+    "image": "31_ceo.png"
+  },
+  {
+    "id": 32,
+    "name": "忍者らりるれろ",
+    "image": "32_ninja.png"
+  },
+  {
+    "id": 33,
+    "name": "海賊らりるれろ",
+    "image": "33_pirate.png"
+  },
+  {
+    "id": 34,
+    "name": "魔法使いらりるれろ",
+    "image": "34_wizard.png"
+  },
+  {
+    "id": 35,
+    "name": "シェフらりるれろ",
+    "image": "35_chef.png"
+  },
+  {
+    "id": 36,
+    "name": "刑事らりるれろ",
+    "image": "36_detective.png"
+  },
+  {
+    "id": 37,
+    "name": "アイドルらりるれろ",
+    "image": "37_idol.png"
+  },
+  {
+    "id": 38,
+    "name": "宇宙飛行士らりるれろ",
+    "image": "38_astronaut.png"
+  },
+  {
+    "id": 39,
+    "name": "武将らりるれろ",
+    "image": "39_warlord.png"
+  },
+  {
+    "id": 40,
+    "name": "サラリーマンらりるれろ",
+    "image": "40_salaryman.png"
+  }
+]
