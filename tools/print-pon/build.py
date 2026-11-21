@@ -21,7 +21,7 @@ def answer(t,a,b):
  return str(a+b) if op=='add' else str(a-b) if op=='sub' else str(a*b) if op=='mul' else str(a//b)+(f' あまり {a%b}' if a%b else '')
 def render_topic(home,t):
  title=t['title']+'｜無料・答えつきPDF印刷｜ぷりぽんっ'
- desc=f'{t["title"]}を無料で作成。{t["level"]}、{t["scope"]}。答えつきの横式20問をA4 PDFですぐ保存・印刷できます。問題数の変更・同じ条件で再生成も可能。登録不要。'
+ desc=t.get('description') or f'{t["title"]}を無料で作成。{t["level"]}、{t["scope"]}。答えつきの横式20問をA4 PDFですぐ保存・印刷できます。問題数の変更・同じ条件で再生成も可能。登録不要。'
  s=home.replace('<body class="simple-ui">','<body class="simple-ui topic-page">')
  s=re.sub(r'<title>.*?</title>',f'<title>{h(title)}</title>',s)
  for attr,key,value in [('name','description',desc),('property','og:title',title),('property','og:description',desc),('property','og:url',SITE+t['slug']+'/'),('name','twitter:title',title),('name','twitter:description',desc)]:
