@@ -22,11 +22,11 @@ class Page(HTMLParser):
   if t=='title':self.title=False
  def handle_data(self,d):
   if self.title:self.titles.append(d)
-seen=set()
+seen=set();seen_desc=set()
 for topic in TOPICS:
  path=OUT/topic['slug']/'index.html';text=path.read_text();page=Page(text)
  assert page.h1==1 and len(page.canon)==1 and page.canon[0]=='https://print-pon.pages.dev/'+topic['slug']+'/'
- assert len(page.description)==1 and topic['level'] in page.description[0] and topic['scope'] in page.description[0]
+ assert len(page.description)==1 and page.description[0]==topic['description'] and page.description[0] not in seen_desc and 60<=len(page.description[0])<=120 and all(w in page.description[0] for w in ['無料','答えつき','A4 PDF','登録不要']);seen_desc.add(page.description[0])
  title=''.join(page.titles);assert title not in seen;seen.add(title)
  assert len(page.ids)==len(set(page.ids)),'Duplicate IDs'
  assert '問題例' in text and topic['tip'] in text and topic['note'] in text
