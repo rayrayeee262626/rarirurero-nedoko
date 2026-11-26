@@ -1,5 +1,5 @@
 {
-  "approved_source_commit": "77a9304e66531d1183754a9e8befdab339f592c4",
+  "approved_source_commit": "d9054d28f03040a12772d6eff3ee6c02f0f01123",
   "project": "rarirurero-nedoko",
   "files": {
     "_worker.js": "9d58b82965d4f61071a2b522699fa94f96d49f2085b9c99e97f54f9810aa4067",
@@ -8,7 +8,7 @@
     "article.html": "efed3dc677ba4c417f77b96ab8401d78ba5f488a8d2c56cfbebcc09b76f68580",
     "bbs.html": "3a0c40343085b005ee3fdba0189b16e145f3bcda95b0b7135715f2f03fd7b038",
     "bbs.js": "a1debdc2ead83fd04d809afbb0d3a1f534ccb8fdd61a319aa32eddd416ca610a",
-    "catalog.json": "0ef5336acdffe2a218a170475366461c6898a83f8d4112b13eb1396e24fdf033",
+    "catalog.json": "fd5a56ca0cbbb2c9d0077c81b5be96194f6bcdce51c3f029f2b4fba1e7c548e1",
     "content.js": "18c0bad04db591fb2f73a152df405066b82feab72458d15ff209724727c11b3c",
     "favicon.png": "743084f436fcc483066e68782dd4724f9b75da9eee4e91db4112422aa935977e",
     "index.html": "63afcbceacb9a5d1b1cdadde33866fffa8cac5109d22813f44ab6a295a51fd6a",
@@ -21,7 +21,7 @@
     "site-view.js": "b746eafe0e175b572c3ea7c643779e571bdb769f81e791acb08f9da70a871910",
     "sitemap.xml": "e51e6fb163f1cc75172a4cb3f23c34551e28280bccca270009889677f2845d77",
     "styles.css": "fd8920dbd2111f266d08de8deccb9d77a433012401e420e68873c9c853155b70",
-    "works.html": "60e8e8427676a521c32dd508130c5d404c7ccf667565912db9765632b7fe72a6",
+    "works.html": "e1d24c0f5ada88ab0b445bf1bf55ef8f49d20518017649090ca4569905898ec8",
     "writings.html": "376bc7509239a8d43c48cdf30d85d8abf265b3b10ad69fdfba2b1eba9f617d8d"
   }
 }
