@@ -2,6 +2,7 @@ import {calculate, Field, Generations, Move, Pokemon, toID} from '@smogon/calc';
 import {roster, stats} from './roster.js';
 
 export const QUESTION_COUNT = 10;
+export const MAX_GUESS = 2000; // 200% or more, in tenths of a percentage point.
 const champions = Generations.get(0);
 
 export function combatant(set) {
@@ -54,7 +55,7 @@ export function createRound(pool, random = Math.random) {
 }
 
 export function grade(guess, {low, high}) {
-  const error = Math.max(low - guess, guess - high, 0);
+  const error = guess === MAX_GUESS ? Math.max(guess - high, 0) : Math.max(low - guess, guess - high, 0);
   return {error, scoreTenths: Math.max(0, 1000 - error)};
 }
 

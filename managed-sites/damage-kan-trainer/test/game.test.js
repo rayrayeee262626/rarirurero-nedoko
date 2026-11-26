@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {combatant, createPool, createRound, grade, validateRoster} from '../src/game.js';
+import {combatant, createPool, createRound, grade, MAX_GUESS, validateRoster} from '../src/game.js';
 import {roster} from '../src/roster.js';
 
 const pool = createPool();
@@ -59,4 +59,12 @@ test('Scoring includes both endpoints and penalizes distance in either direction
   assert.deepEqual(grade(1000, range), {error: 500, scoreTenths: 500});
   assert.deepEqual(grade(1501, range), {error: 1001, scoreTenths: 0});
   assert.deepEqual(grade(0, {low: 0, high: 0}), {error: 0, scoreTenths: 1000});
+});
+
+test('The slider maximum represents the range from 200% upward', () => {
+  for (const range of [{low: 1900, high: 2000}, {low: 2100, high: 2500}]) {
+    assert.deepEqual(grade(MAX_GUESS, range), {error: 0, scoreTenths: 1000});
+  }
+  assert.deepEqual(grade(MAX_GUESS, {low: 1700, high: 1977}), {error: 23, scoreTenths: 977});
+  assert.deepEqual(grade(1999, {low: 2100, high: 2500}), {error: 101, scoreTenths: 899});
 });

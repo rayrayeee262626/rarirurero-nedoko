@@ -12,7 +12,7 @@ Cloudflare Pages の Git 連携では、ルートディレクトリをこのプ�
 
 - npm 公開版 `@smogon/calc` 0.12.0 を固定。パッケージの `Generations.get(0)` は Champions データと `calculateChampions` に接続します。旧 API 名の `evs` に能力ポイントを等倍で渡し、Champions 専用のステータス式を使います。種族値・性格・タイプ相性・特性・持ち物・メガシンカ後のフォルム・ダブルの範囲補正・85〜100の16段階乱数は、この経路で計算します。[npm](https://www.npmjs.com/package/@smogon/calc/v/0.12.0) · [専用の計算処理](https://github.com/smogon/damage-calc/blob/master/calc/src/mechanics/champions.ts)
 - M-C の使用率上位を中心に12フォルム・18種類の攻撃技を選び、性格・特性・能力ポイント・持ち物を固定したセットを作りました。245通りの攻撃側・防御側・技の組み合わせから、毎回重複なしでランダムに10問出題します。使用率は Showdown の2026年10月分を参照し、現在の実機ランクマッチの使用率は取得していません。[公式のシーズン M-8](https://news.pokemon-home.com/ja/page/867.html) · [Showdown 使用率](https://www.smogon.com/stats/2026-10/gen9championsvgc2026regmc-0.txt) · [技・配分別集計](https://www.smogon.com/stats/2026-10/moveset/gen9championsvgc2026regmc-0.txt)
-- 正解範囲は `ダメージ ÷ 防御側の最大HP × 100` の両端を小数第1位に丸めた値です。最大HPを超える計算ダメージも表示します。範囲内は100点、範囲外は最も近い端までの差をそのまま100点から引きます（1パーセントポイントにつき1点、最低0点）です。
+- 正解範囲は `ダメージ ÷ 防御側の最大HP × 100` の両端を小数第1位に丸めた値です。最大HPを超える計算ダメージも表示します。範囲内は100点、範囲外は最も近い端までの差をそのまま100点から引きます（1パーセントポイントにつき1点、最低0点）です。スライダーの右端は「200%以上」です。正解範囲に200%以上が含まれる場合は100点、含まれない場合は上限と200%の差を減点します。
 
 ## 検証と対応範囲
 

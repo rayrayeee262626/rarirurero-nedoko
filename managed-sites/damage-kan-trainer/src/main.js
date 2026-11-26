@@ -1,9 +1,11 @@
-import {createPool, createRound, grade, QUESTION_COUNT, validateRoster} from './game.js';
+import {createPool, createRound, grade, QUESTION_COUNT, MAX_GUESS, validateRoster} from './game.js';
 import {statLabels, types} from './roster.js';
 
 const game = document.querySelector('#game');
 const percent = tenth => (tenth / 10).toFixed(1);
 const displayType = type => `<span class="type type-${type.toLowerCase()}">${types[type]}</span>`;
+const maxGuessLabel = '200%以上';
+const displayGuess = value => value === MAX_GUESS ? maxGuessLabel : `${percent(value)}%`;
 const displayScore = tenths => tenths % 10 === 0 ? String(tenths / 10) : (tenths / 10).toFixed(1);
 const MAX_SCORE = 100 * QUESTION_COUNT;
 
@@ -24,7 +26,6 @@ function card(set, role, modifier) {
 
 function start(pool) {
   const round = createRound(pool);
-  const limit = Math.max(2000, Math.ceil(Math.max(...pool.map(q => q.high)) / 500) * 500);
   const history = [];
   draw();
 
@@ -40,7 +41,7 @@ function start(pool) {
         <ol class="history">${history.map((answer, i) => `<li>
           <span class="history-number">${i + 1}</span>
           <div><strong>${round[i].move.label}</strong><small>${round[i].attacker.label} → ${round[i].defender.label}</small>
-          <small>予想 ${percent(answer.guess)}% ／ 正解 ${percent(round[i].low)}–${percent(round[i].high)}%</small></div>
+          <small>予想 ${displayGuess(answer.guess)} ／ 正解 ${percent(round[i].low)}–${percent(round[i].high)}%</small></div>
           <b>${displayScore(answer.scoreTenths)} 点</b></li>`).join('')}</ol>
       </section>`;
       game.querySelector('#restart').onclick = () => start(pool);
@@ -67,21 +68,21 @@ function start(pool) {
       </section>
       <section class="answer-card" aria-label="回答">
         <div class="guess-value"><label for="guess">ダメージ予想</label><output id="prediction" for="guess">50.0<small>%</small></output></div>
-        <input type="range" id="guess" min="0" max="${limit}" value="500" step="1" aria-describedby="scale-help" aria-valuetext="50.0%">
-        <div class="scale" aria-hidden="true"><span>0%</span><span>100%</span><span>${limit / 10}%</span></div>
-        <p id="scale-help">最大HPに対する割合。100%を超える予想もできます。</p>
+        <input type="range" id="guess" min="0" max="${MAX_GUESS}" value="500" step="1" aria-describedby="scale-help" aria-valuetext="50.0%">
+        <div class="scale" aria-hidden="true"><span>0%</span><span>100%</span><span>${maxGuessLabel}</span></div>
+        <p id="scale-help">最大HPに対する割合。右端は200%以上です。</p>
         <div class="adjust" aria-label="予想を調整">
+          <button type="button" data-delta="-100">−10%</button>
           <button type="button" data-delta="-10">−1%</button>
-          <button type="button" data-delta="-1">−0.1%</button>
-          <button type="button" data-delta="1">＋0.1%</button>
           <button type="button" data-delta="10">＋1%</button>
+          <button type="button" data-delta="100">＋10%</button>
         </div>
         <div id="feedback" aria-live="polite"></div>
         <button class="primary" id="action">回答する</button>
       </section>
       <details class="rules"><summary>出題条件と採点</summary>
         <p>防御側はHP満タン。表示された2体の場に出たときの特性を反映し、メガシンカは完了済みです。天候・状態異常・味方の補助はありません。範囲技は複数体に当たる場合で計算します。最大HPを超える計算ダメージもそのまま表示します。</p>
-        <p>正解は小数第1位に丸めた乱数範囲です。範囲内は100点。範囲外は、最も近い端までのズレを100点から引きます。1パーセントポイントのズレで1点減点し、最低は0点です。</p>
+        <p>正解は小数第1位に丸めた乱数範囲です。範囲内は100点。範囲外は、最も近い端までのズレを100点から引きます。1パーセントポイントのズレで1点減点し、最低は0点です。「200%以上」は、正解範囲に200%以上が含まれていれば100点です。</p>
       </details>`;
 
     if (focus) game.querySelector('h2').focus();
@@ -90,13 +91,14 @@ function start(pool) {
     const action = game.querySelector('#action');
     const adjust = game.querySelectorAll('[data-delta]');
     function update() {
-      const value = percent(Number(guess.value));
-      prediction.innerHTML = `${value}<small>%</small>`;
-      guess.setAttribute('aria-valuetext', `${value}%`);
-      guess.style.setProperty('--fill', `${Number(guess.value) * 100 / limit}%`);
+      const value = Number(guess.value);
+      prediction.innerHTML = value === MAX_GUESS
+        ? '200<small>%以上</small>'
+        : `${percent(value)}<small>%</small>`;
+      guess.setAttribute('aria-valuetext', displayGuess(value));
+      guess.style.setProperty('--fill', `${value * 100 / MAX_GUESS}%`);
     }
     update();
-    game.querySelector('.scale').style.setProperty('--hp-marker', `${100000 / limit}%`);
     guess.oninput = update;
     for (const button of adjust) {
       button.onclick = () => {

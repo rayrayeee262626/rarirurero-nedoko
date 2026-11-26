@@ -93,7 +93,7 @@ input[type=range]::-webkit-slider-thumb { appearance: none; width: 23px; height:
 input[type=range]::-moz-range-thumb { width: 17px; height: 17px; border: 3px solid #d6fff4; border-radius: 50%; background: #60cbb0; }
 input[type=range]:disabled { opacity: .55; cursor: default; }
 .scale { position: relative; display: flex; justify-content: space-between; color: var(--muted); font-size: .75rem; }
-.scale span:nth-child(2) { position: absolute; left: var(--hp-marker); transform: translateX(-50%); }
+.scale span:nth-child(2) { position: absolute; left: 50%; transform: translateX(-50%); }
 #scale-help { margin: 6px 0 8px; font-size: .8rem; color: var(--muted); }
 .adjust { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 9px; }
 .adjust button {
